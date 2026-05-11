@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: ROBOT-ATTENDANCE-UPDATE-V5
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot.py
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: GOOGLE_CREDENTIALS
+        sync: false
+      - key: SPREADSHEET_ID
+        value: "1bEdQRdCjsEj654_wjml6iX0FiJQ---B5A2k179UpK6Y"
+      - key: PORT
+        value: "10000"

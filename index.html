@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>UptimeRobot Attendance</title>
+<script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+/* ===================== RESET & BASE ===================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:         #0d0f14;
+  --bg2:        #151820;
+  --bg3:        #1c1f2a;
+  --bg4:        #232736;
+  --border:     rgba(255,255,255,0.07);
+  --border2:    rgba(255,255,255,0.12);
+  --text:       #e8eaf0;
+  --text2:      #8b90a0;
+  --text3:      #555b6e;
+  --green:      #22d37a;
+  --green-bg:   rgba(34,211,122,0.1);
+  --green-b:    rgba(34,211,122,0.25);
+  --red:        #f04e5e;
+  --red-bg:     rgba(240,78,94,0.1);
+  --red-b:      rgba(240,78,94,0.25);
+  --amber:      #f5a623;
+  --amber-bg:   rgba(245,166,35,0.1);
+  --amber-b:    rgba(245,166,35,0.25);
+  --blue:       #4d9fff;
+  --blue-bg:    rgba(77,159,255,0.1);
+  --blue-b:     rgba(77,159,255,0.25);
+  --purple:     #a78bfa;
+  --purple-bg:  rgba(167,139,250,0.1);
+  --accent:     #22d37a;
+  --radius:     10px;
+  --radius-lg:  14px;
+  --radius-xl:  18px;
+}
+html { font-size: 15px; }
+body {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+button { cursor: pointer; font-family: inherit; }
+input  { font-family: inherit; }
+
+/* ===================== SCROLLBAR ===================== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
+
+/* ===================== TOPBAR ===================== */
+.topbar {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(13,15,20,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px;
+}
+.logo {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 15px; font-weight: 600; letter-spacing: -0.01em;
+}
+.logo-icon {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: linear-gradient(135deg, #22d37a, #4d9fff);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+.topbar-center { display: flex; align-items: center; gap: 6px; }
+.topbar-right  { display: flex; align-items: center; gap: 12px; }
+
+.tab-pill {
+  display: flex; background: var(--bg3);
+  border: 1px solid var(--border); border-radius: 999px; padding: 3px; gap: 2px;
+}
+.tab-pill button {
+  padding: 5px 16px; border: none; border-radius: 999px;
+  font-size: 13px; font-weight: 500;
+  background: transparent; color: var(--text2);
+  transition: all 0.18s;
+}
+.tab-pill button.active {
+  background: var(--bg4); color: var(--text);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+.live-indicator {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--text2);
+}
+.live-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green); animation: blink 1.6s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+.refresh-btn {
+  width: 32px; height: 32px; border-radius: 8px;
+  border: 1px solid var(--border2); background: var(--bg3);
+  color: var(--text2); font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.refresh-btn:hover { background: var(--bg4); color: var(--text); }
+.refresh-btn.spin svg { animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===================== LAYOUT ===================== */
+.app-shell { display: flex; min-height: calc(100vh - 60px); }
+
+/* Sidebar */
+.sidebar {
+  width: 260px; flex-shrink: 0;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  padding: 16px 10px;
+  display: flex; flex-direction: column; gap: 4px;
+  overflow-y: auto;
+}
+.sidebar-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+  color: var(--text3); text-transform: uppercase;
+  padding: 8px 10px 4px;
+}
+.user-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: var(--radius);
+  cursor: pointer; transition: background 0.15s;
+  border: 1px solid transparent;
+}
+.user-row:hover   { background: var(--bg3); }
+.user-row.active  { background: var(--bg3); border-color: var(--border2); }
+.user-avatar {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; flex-shrink: 0;
+}
+.user-row-info { flex: 1; min-width: 0; }
+.user-row-name {
+  font-size: 13px; font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.user-row-id { font-size: 11px; color: var(--text3); }
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.dot-present { background: var(--green); }
+.dot-pause   { background: var(--amber); }
+.dot-absent  { background: var(--text3); }
+
+/* Main content */
+.main-content { flex: 1; overflow-y: auto; padding: 24px 28px; }
+
+/* ===================== SECTION TITLE ===================== */
+.section-title {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.09em;
+  color: var(--text3); text-transform: uppercase; margin-bottom: 12px;
+}
+
+/* ===================== PROFILE HEADER ===================== */
+.profile-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-xl); padding: 20px 24px;
+  margin-bottom: 20px;
+}
+.profile-left { display: flex; align-items: center; gap: 16px; }
+.profile-avatar {
+  width: 52px; height: 52px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 700;
+}
+.profile-name { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 2px; }
+.profile-uid  { font-size: 12px; color: var(--text3); font-family: monospace; }
+.profile-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.status-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 999px;
+  font-size: 12px; font-weight: 600;
+}
+.badge-present { background: var(--green-bg); border: 1px solid var(--green-b); color: var(--green); }
+.badge-pause   { background: var(--amber-bg); border: 1px solid var(--amber-b); color: var(--amber); }
+.badge-absent  { background: var(--bg4);      border: 1px solid var(--border);  color: var(--text3); }
+.last-update   { font-size: 11px; color: var(--text3); }
+
+/* ===================== METRICS GRID ===================== */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px; margin-bottom: 20px;
+}
+.metric-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 14px 16px;
+  position: relative; overflow: hidden;
+}
+.metric-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 2px; border-radius: 2px 2px 0 0;
+}
+.metric-card.green::before  { background: var(--green); }
+.metric-card.red::before    { background: var(--red); }
+.metric-card.amber::before  { background: var(--amber); }
+.metric-card.blue::before   { background: var(--blue); }
+.metric-card.purple::before { background: var(--purple); }
+.metric-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text3); margin-bottom: 6px;
+}
+.metric-value { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
+.metric-sub   { font-size: 11px; color: var(--text3); margin-top: 3px; }
+.metric-value.green  { color: var(--green); }
+.metric-value.red    { color: var(--red); }
+.metric-value.amber  { color: var(--amber); }
+.metric-value.blue   { color: var(--blue); }
+.metric-value.purple { color: var(--purple); }
+
+/* ===================== TWO-COL ===================== */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+
+/* ===================== INFO CARD ===================== */
+.info-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 16px 18px;
+}
+.info-card-title {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text3); margin-bottom: 12px;
+}
+.info-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+}
+.info-row:last-child { border-bottom: none; }
+.info-row-label { font-size: 13px; color: var(--text2); display: flex; align-items: center; gap: 7px; }
+.info-row-icon  { font-size: 14px; width: 18px; text-align: center; }
+.info-row-val   { font-size: 13px; font-weight: 500; }
+.val-green { color: var(--green); }
+.val-red   { color: var(--red); }
+.val-amber { color: var(--amber); }
+
+/* ===================== PAUSE CARDS ===================== */
+.pause-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;
+}
+.pause-item {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 10px 12px;
+}
+.pause-item-header {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--text2); margin-bottom: 6px;
+}
+.pause-item-emoji { font-size: 14px; }
+.pause-count { font-size: 18px; font-weight: 700; }
+.pause-dur   { font-size: 11px; color: var(--text3); margin-top: 1px; }
+
+/* ===================== ACTIVE BREAK BANNER ===================== */
+.break-banner {
+  background: var(--amber-bg); border: 1px solid var(--amber-b);
+  border-radius: var(--radius-lg); padding: 12px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.break-banner-left { display: flex; align-items: center; gap: 10px; }
+.break-banner-emoji { font-size: 20px; }
+.break-banner-label { font-size: 13px; font-weight: 600; color: var(--amber); }
+.break-banner-since { font-size: 11px; color: var(--text2); margin-top: 1px; }
+.break-banner-right { font-size: 12px; color: var(--text3); }
+.overdue { color: var(--red); font-weight: 600; }
+
+/* ===================== SESSIONS TABLE ===================== */
+.sessions-table {
+  width: 100%; border-collapse: collapse; font-size: 12px;
+}
+.sessions-table th {
+  text-align: left; padding: 6px 8px;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--text3);
+  border-bottom: 1px solid var(--border);
+}
+.sessions-table td {
+  padding: 8px 8px; border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.sessions-table tr:last-child td { border-bottom: none; }
+.sessions-table tr:hover td { background: rgba(255,255,255,0.02); }
+.exceeded-pill {
+  display: inline-block; padding: 1px 7px; border-radius: 999px;
+  font-size: 10px; font-weight: 600;
+  background: var(--red-bg); border: 1px solid var(--red-b); color: var(--red);
+}
+.ok-pill {
+  display: inline-block; padding: 1px 7px; border-radius: 999px;
+  font-size: 10px; font-weight: 600;
+  background: var(--green-bg); border: 1px solid var(--green-b); color: var(--green);
+}
+
+/* ===================== MONTHLY ===================== */
+.monthly-metrics {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr));
+  gap: 10px; margin-bottom: 20px;
+}
+.chart-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 16px 18px; margin-bottom: 20px;
+}
+.chart-card-title {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text3); margin-bottom: 14px;
+}
+.chart-wrap { position: relative; width: 100%; height: 200px; }
+.monthly-table-wrap {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+}
+.monthly-table-header {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text3);
+}
+.monthly-table {
+  width: 100%; border-collapse: collapse; font-size: 12px;
+}
+.monthly-table th {
+  padding: 8px 14px; text-align: left;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--text3);
+  border-bottom: 1px solid var(--border); background: var(--bg3);
+}
+.monthly-table td {
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+}
+.monthly-table tr:last-child td { border-bottom: none; }
+.monthly-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* ===================== EMPTY / ERROR STATES ===================== */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 300px; color: var(--text3); gap: 12px;
+}
+.empty-icon { font-size: 40px; }
+.empty-text { font-size: 14px; }
+
+.error-banner {
+  background: var(--red-bg); border: 1px solid var(--red-b);
+  border-radius: var(--radius); padding: 10px 14px;
+  font-size: 13px; color: var(--red); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* ===================== API CONFIG ===================== */
+.config-bar {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: var(--radius); padding: 6px 10px;
+}
+.config-bar input {
+  background: transparent; border: none; outline: none;
+  color: var(--text); font-size: 12px; font-family: monospace;
+  width: 260px;
+}
+.config-bar input::placeholder { color: var(--text3); }
+.config-bar-label { font-size: 11px; color: var(--text3); white-space: nowrap; }
+.apply-btn {
+  padding: 4px 12px; border-radius: 6px;
+  background: var(--accent); color: #000; font-size: 12px; font-weight: 600;
+  border: none; transition: opacity 0.15s;
+}
+.apply-btn:hover { opacity: 0.85; }
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 900px) {
+  .sidebar    { width: 220px; }
+  .two-col    { grid-template-columns: 1fr; }
+}
+@media (max-width: 680px) {
+  .sidebar    { display: none; }
+  .main-content { padding: 16px; }
+  .topbar     { padding: 0 16px; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const { useState, useEffect, useRef, useCallback } = React;
+
+// ===================== UTILS =====================
+function fmtSec(totalSec) {
+  if (!totalSec || totalSec <= 0) return "0min";
+  const s = Math.round(totalSec);
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sc = s % 60;
+  if (h > 0) return `${h}h${String(m).padStart(2,'0')}min`;
+  if (m > 0 && sc > 0) return `${m}min ${sc}s`;
+  if (m > 0) return `${m}min`;
+  return `${sc}s`;
+}
+
+function fmtHM(totalSec) {
+  if (!totalSec || totalSec <= 0) return "0h00";
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  return `${h}h${String(m).padStart(2,'0')}`;
+}
+
+function initials(name) {
+  if (!name) return "?";
+  return name.split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase();
+}
+
+const AVATAR_COLORS = [
+  { bg: "rgba(34,211,122,0.15)",  color: "#22d37a" },
+  { bg: "rgba(77,159,255,0.15)",  color: "#4d9fff" },
+  { bg: "rgba(167,139,250,0.15)", color: "#a78bfa" },
+  { bg: "rgba(245,166,35,0.15)",  color: "#f5a623" },
+  { bg: "rgba(240,78,94,0.15)",   color: "#f04e5e" },
+];
+function avatarColor(index) { return AVATAR_COLORS[index % AVATAR_COLORS.length]; }
+
+const BREAK_LABELS = {
+  BREAK_FOOD:         { label: "Repas",        emoji: "🍽", color: "amber" },
+  BREAK_TOILET_SMALL: { label: "Pause courte",  emoji: "🚻", color: "blue"  },
+  BREAK_TOILET_BIG:   { label: "Pause longue",  emoji: "🚽", color: "purple"},
+  BREAK_SMOKE:        { label: "Cigarette",     emoji: "🚬", color: "red"   },
+};
+
+// ===================== DEMO DATA =====================
+function makeDemoData() {
+  const now = new Date();
+  const hhmm = t => t.toTimeString().slice(0,5);
+  const workStart = new Date(now); workStart.setHours(8,2,0,0);
+  const elapsed   = (now - workStart) / 1000;
+
+  return {
+    timestamp: now.toISOString(),
+    date: now.toISOString().slice(0,10),
+    employes: [
+      {
+        user_id: 101, nom: "Rakoto Jean", username: "rakoto_j", statut: "present",
+        heure_arrivee: "08:02", heure_depart: "--:--",
+        retard_min: 2, depart_anticipe_min: 0,
+        temps_travail_sec: elapsed, temps_effectif_sec: elapsed - 3780,
+        pauses_total_sec: 3780, depassements_sec: 240,
+        pause_repas:      { count: 1, duree_sec: 2400 },
+        pauses_courtes:   { count: 3, duree_sec: 630  },
+        pauses_longues:   { count: 0, duree_sec: 0    },
+        pauses_cigarette: { count: 4, duree_sec: 750  },
+        departs_temporaires: { count: 4, duree_sec: 3780 },
+        activites_total_sec: elapsed,
+        pause_courante: null,
+        sessions: [
+          { type:"BREAK_FOOD",         label:"Eat",          start:"09:15:00", end:"10:00:00", duration:2700, exceeded:true  },
+          { type:"BREAK_TOILET_SMALL", label:"Small toilet", start:"10:45:00", end:"10:52:00", duration:420,  exceeded:false },
+          { type:"BREAK_SMOKE",        label:"Smoke",        start:"11:30:00", end:"11:37:30", duration:450,  exceeded:true  },
+          { type:"BREAK_TOILET_SMALL", label:"Small toilet", start:"13:10:00", end:"13:14:00", duration:240,  exceeded:false },
+        ],
+        last_update: hhmm(now)
+      },
+      {
+        user_id: 102, nom: "Rabe Miora", username: "rabe_m", statut: "absent",
+        heure_arrivee: "--:--", heure_depart: "--:--",
+        retard_min: 0, depart_anticipe_min: 0,
+        temps_travail_sec: 0, temps_effectif_sec: 0,
+        pauses_total_sec: 0, depassements_sec: 0,
+        pause_repas: {count:0,duree_sec:0}, pauses_courtes:{count:0,duree_sec:0},
+        pauses_longues:{count:0,duree_sec:0}, pauses_cigarette:{count:0,duree_sec:0},
+        departs_temporaires:{count:0,duree_sec:0}, activites_total_sec:0,
+        pause_courante: null, sessions: [], last_update: hhmm(now)
+      },
+      {
+        user_id: 103, nom: "Andry Harison", username: "andry_h", statut: "pause",
+        heure_arrivee: "07:55", heure_depart: "--:--",
+        retard_min: 0, depart_anticipe_min: 0,
+        temps_travail_sec: elapsed + 420,
+        temps_effectif_sec: elapsed + 420 - 2760,
+        pauses_total_sec: 2760, depassements_sec: 0,
+        pause_repas:      { count: 1, duree_sec: 1800 },
+        pauses_courtes:   { count: 2, duree_sec: 720  },
+        pauses_longues:   { count: 1, duree_sec: 240  },
+        pauses_cigarette: { count: 2, duree_sec: 480  },
+        departs_temporaires:{count:3,duree_sec:2760}, activites_total_sec:elapsed+420,
+        pause_courante: {
+          type:"BREAK_TOILET_SMALL", label:"Small toilet",
+          elapsed: 180, limit: 420, exceeded: false
+        },
+        sessions: [
+          { type:"BREAK_FOOD",         label:"Eat",          start:"12:00:00", end:"12:30:00", duration:1800, exceeded:false },
+          { type:"BREAK_TOILET_SMALL", label:"Small toilet", start:"10:20:00", end:"10:32:00", duration:720,  exceeded:false },
+          { type:"BREAK_SMOKE",        label:"Smoke",        start:"11:00:00", end:"11:08:00", duration:480,  exceeded:true  },
+        ],
+        last_update: hhmm(now)
+      }
+    ]
+  };
+}
+
+const DEMO_MONTHLY = (() => {
+  const rows = [];
+  const labels = ["01","02","03","04","05","06","07","08","09","10",
+                   "11","12","13","14","15","16","17","18","19","20"];
+  const presences = [1,1,0,1,1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1];
+  const hours =     [8.2,8.4,0,7.8,8.9,8.3,7.7,0,8.0,8.6,8.1,0,8.5,8.2,7.9,8.4,0,8.7,8.0,8.3];
+  const delays =    [2,0,0,10,0,0,30,0,5,0,0,0,0,8,0,0,0,3,0,0];
+  for (let i=0;i<labels.length;i++) {
+    rows.push({
+      date: `${labels[i]}/05`,
+      arrivee: presences[i] ? `0${7 + Math.floor(Math.random()*1)}:${String(Math.floor(Math.random()*60)).padStart(2,'0')}` : "--:--",
+      depart:  presences[i] ? "19:00" : "--:--",
+      travail: fmtHM(hours[i]*3600),
+      heures:  hours[i],
+      retard:  delays[i],
+      statut:  presences[i] ? "present" : "absent"
+    });
+  }
+  return rows;
+})();
+
+// ===================== COMPONENTS =====================
+
+function StatusBadge({ statut }) {
+  if (statut === "present") return <span className="status-badge badge-present">● Présent</span>;
+  if (statut === "pause")   return <span className="status-badge badge-pause">◐ En pause</span>;
+  return <span className="status-badge badge-absent">○ Absent</span>;
+}
+
+function BreakBanner({ pause_courante }) {
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setTick(t => t+1), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  if (!pause_courante) return null;
+  const { type, elapsed, limit, exceeded } = pause_courante;
+  const info  = BREAK_LABELS[type] || { label: "Pause", emoji: "⏸" };
+  const live  = elapsed + tick;
+  const over  = live - limit;
+
+  return (
+    <div className="break-banner">
+      <div className="break-banner-left">
+        <div className="break-banner-emoji">{info.emoji}</div>
+        <div>
+          <div className="break-banner-label">{info.label} en cours</div>
+          <div className="break-banner-since">Écoulé : {fmtSec(live)} / Limite : {fmtSec(limit)}</div>
+        </div>
+      </div>
+      <div className="break-banner-right">
+        {exceeded || over > 0
+          ? <span className="overdue">⚠ +{fmtSec(Math.max(over,0))} dépassé</span>
+          : <span>Restant : {fmtSec(Math.max(limit-live,0))}</span>
+        }
+      </div>
+    </div>
+  );
+}
+
+function DailyView({ emp, colorIdx }) {
+  const ac = avatarColor(colorIdx);
+  const retardStr     = emp.retard_min > 0 ? `+${emp.retard_min} min` : "Aucun";
+  const anticipeStr   = emp.depart_anticipe_min > 0 ? `-${emp.depart_anticipe_min} min` : "Aucun";
+  const depassStr     = emp.depassements_sec > 0 ? fmtSec(emp.depassements_sec) : "Aucun";
+
+  return (
+    <div>
+      {/* Profile */}
+      <div className="profile-header">
+        <div className="profile-left">
+          <div className="profile-avatar" style={{ background: ac.bg, color: ac.color }}>
+            {initials(emp.nom)}
+          </div>
+          <div>
+            <div className="profile-name">{emp.nom}</div>
+            <div className="profile-uid">ID: {emp.user_id} {emp.username !== "N/A" ? `· @${emp.username}` : ""}</div>
+          </div>
+        </div>
+        <div className="profile-right">
+          <StatusBadge statut={emp.statut} />
+          <div className="last-update">Mise à jour : {emp.last_update}</div>
+        </div>
+      </div>
+
+      {/* Active break banner */}
+      {emp.pause_courante && <BreakBanner pause_courante={emp.pause_courante} />}
+
+      {/* Key metrics */}
+      <div className="metrics-grid">
+        <div className="metric-card green">
+          <div className="metric-label">Temps de travail</div>
+          <div className="metric-value green">{fmtHM(emp.temps_travail_sec)}</div>
+          <div className="metric-sub">depuis l'arrivée</div>
+        </div>
+        <div className="metric-card blue">
+          <div className="metric-label">Temps effectif</div>
+          <div className="metric-value blue">{fmtHM(emp.temps_effectif_sec)}</div>
+          <div className="metric-sub">pauses exclues</div>
+        </div>
+        <div className={`metric-card ${emp.retard_min > 0 ? 'red' : 'green'}`}>
+          <div className="metric-label">Retard</div>
+          <div className={`metric-value ${emp.retard_min > 0 ? 'red' : 'green'}`}>{retardStr}</div>
+        </div>
+        <div className={`metric-card ${emp.depassements_sec > 0 ? 'amber' : 'green'}`}>
+          <div className="metric-label">Dépassements</div>
+          <div className={`metric-value ${emp.depassements_sec > 0 ? 'amber' : 'green'}`}>{depassStr}</div>
+        </div>
+        <div className="metric-card purple">
+          <div className="metric-label">Tps travail total</div>
+          <div className="metric-value purple">{fmtHM(emp.temps_effectif_sec)}</div>
+          <div className="metric-sub">net (sans pauses)</div>
+        </div>
+      </div>
+
+      {/* Horaires + Pauses */}
+      <div className="two-col">
+        <div className="info-card">
+          <div className="info-card-title">Horaires</div>
+          <div className="info-row">
+            <span className="info-row-label"><span className="info-row-icon">🚀</span>Heure d'arrivée</span>
+            <span className="info-row-val">{emp.heure_arrivee}</span>
+          </div>
+          <div className="info-row">
+            <span className="info-row-label"><span className="info-row-icon">🏁</span>Heure de départ</span>
+            <span className="info-row-val">{emp.heure_depart}</span>
+          </div>
+          <div className="info-row">
+            <span className="info-row-label"><span className="info-row-icon">⏱</span>Activités totales</span>
+            <span className="info-row-val">{fmtHM(emp.activites_total_sec)}</span>
+          </div>
+          <div className="info-row">
+            <span className="info-row-label"><span className="info-row-icon">⚠️</span>Retard</span>
+            <span className={`info-row-val ${emp.retard_min > 0 ? 'val-red' : 'val-green'}`}>{retardStr}</span>
+          </div>
+          <div className="info-row">
+            <span className="info-row-label"><span className="info-row-icon">🔚</span>Départ anticipé</span>
+            <span className={`info-row-val ${emp.depart_anticipe_min > 0 ? 'val-amber' : 'val-green'}`}>{anticipeStr}</span>
+          </div>
+          <div className="info-row">
+            <span className="info-row-label"><span className="info-row-icon">⏰</span>Dépassements</span>
+            <span className={`info-row-val ${emp.depassements_sec > 0 ? 'val-red' : 'val-green'}`}>{depassStr}</span>
+          </div>
+          <div className="info-row">
+            <span className="info-row-label"><span className="info-row-icon">💼</span>Travail total</span>
+            <span className="info-row-val val-green">{fmtHM(emp.temps_effectif_sec)}</span>
+          </div>
+        </div>
+
+        <div className="info-card">
+          <div className="info-card-title">Pauses</div>
+          <div className="pause-grid">
+            <div className="pause-item">
+              <div className="pause-item-header"><span className="pause-item-emoji">🍽</span>Repas</div>
+              <div className="pause-count">{emp.pause_repas.count}<span style={{fontSize:12,fontWeight:400,color:'var(--text3)'}}>×</span></div>
+              <div className="pause-dur">{fmtSec(emp.pause_repas.duree_sec)} total</div>
+            </div>
+            <div className="pause-item">
+              <div className="pause-item-header"><span className="pause-item-emoji">🚻</span>Courtes</div>
+              <div className="pause-count">{emp.pauses_courtes.count}<span style={{fontSize:12,fontWeight:400,color:'var(--text3)'}}>×</span></div>
+              <div className="pause-dur">{fmtSec(emp.pauses_courtes.duree_sec)} total</div>
+            </div>
+            <div className="pause-item">
+              <div className="pause-item-header"><span className="pause-item-emoji">🚽</span>Longues</div>
+              <div className="pause-count">{emp.pauses_longues.count}<span style={{fontSize:12,fontWeight:400,color:'var(--text3)'}}>×</span></div>
+              <div className="pause-dur">{fmtSec(emp.pauses_longues.duree_sec)} total</div>
+            </div>
+            <div className="pause-item">
+              <div className="pause-item-header"><span className="pause-item-emoji">🚬</span>Cigarette</div>
+              <div className="pause-count">{emp.pauses_cigarette.count}<span style={{fontSize:12,fontWeight:400,color:'var(--text3)'}}>×</span></div>
+              <div className="pause-dur">{fmtSec(emp.pauses_cigarette.duree_sec)} total</div>
+            </div>
+          </div>
+          <div className="info-row">
+            <span className="info-row-label"><span className="info-row-icon">🚶</span>Départs temporaires</span>
+            <span className="info-row-val">{emp.departs_temporaires.count}× · {fmtSec(emp.departs_temporaires.duree_sec)}</span>
+          </div>
+          <div className="info-row">
+            <span className="info-row-label"><span className="info-row-icon">☕</span>Total pauses</span>
+            <span className="info-row-val val-amber">{fmtHM(emp.pauses_total_sec)}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Sessions */}
+      {emp.sessions && emp.sessions.length > 0 && (
+        <div className="info-card">
+          <div className="info-card-title">Historique des pauses</div>
+          <table className="sessions-table">
+            <thead>
+              <tr>
+                <th>Type</th><th>Début</th><th>Fin</th><th>Durée</th><th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              {emp.sessions.map((s, i) => {
+                const info = BREAK_LABELS[s.type] || { emoji:"⏸", label: s.label };
+                return (
+                  <tr key={i}>
+                    <td>{info.emoji} {info.label || s.label}</td>
+                    <td style={{fontFamily:'monospace'}}>{s.start}</td>
+                    <td style={{fontFamily:'monospace'}}>{s.end}</td>
+                    <td>{fmtSec(s.duration)}</td>
+                    <td>{s.exceeded
+                      ? <span className="exceeded-pill">⚠ Dépassé</span>
+                      : <span className="ok-pill">✓ OK</span>}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MonthlyChart({ data }) {
+  const ref = useRef(null);
+  const chartRef = useRef(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; }
+
+    const labels = data.map(r => r.date);
+    const vals   = data.map(r => r.heures);
+    const colors = data.map(r => r.statut === "present"
+      ? "rgba(34,211,122,0.7)" : "rgba(240,78,94,0.35)");
+
+    chartRef.current = new Chart(ref.current, {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [{
+          label: "Heures",
+          data: vals,
+          backgroundColor: colors,
+          borderRadius: 4,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: c => `${c.raw}h` } }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: "#555b6e", font: { size: 10 } } },
+          y: {
+            min: 0, max: 10,
+            ticks: { color: "#555b6e", font: { size: 10 }, callback: v => `${v}h` },
+            grid: { color: "rgba(255,255,255,0.04)" }
+          }
+        }
+      }
+    });
+    return () => { if (chartRef.current) chartRef.current.destroy(); };
+  }, [data]);
+
+  return <canvas ref={ref} role="img" aria-label="Graphique des heures de travail journalières">Données de présence quotidienne.</canvas>;
+}
+
+function MonthlyView({ data }) {
+  const rows   = data || DEMO_MONTHLY;
+  const presents = rows.filter(r => r.statut === "present").length;
+  const absents  = rows.length - presents;
+  const totalH   = rows.reduce((s, r) => s + r.heures, 0);
+  const totalRetard = rows.reduce((s, r) => s + (r.retard || 0), 0);
+
+  return (
+    <div>
+      <div className="monthly-metrics">
+        <div className="metric-card green">
+          <div className="metric-label">Jours présents</div>
+          <div className="metric-value green">{presents}</div>
+          <div className="metric-sub">sur {rows.length} ouvrés</div>
+        </div>
+        <div className="metric-card red">
+          <div className="metric-label">Jours absents</div>
+          <div className="metric-value red">{absents}</div>
+        </div>
+        <div className="metric-card blue">
+          <div className="metric-label">Heures totales</div>
+          <div className="metric-value blue">{totalH.toFixed(1)}h</div>
+        </div>
+        <div className="metric-card amber">
+          <div className="metric-label">Retards cumulés</div>
+          <div className="metric-value amber">{totalRetard} min</div>
+        </div>
+      </div>
+
+      <div className="chart-card">
+        <div className="chart-card-title">Heures travaillées — Mai 2025</div>
+        <div style={{display:"flex",gap:16,marginBottom:12,fontSize:11,color:"var(--text3)"}}>
+          <span><span style={{display:"inline-block",width:10,height:10,borderRadius:2,background:"rgba(34,211,122,0.7)",marginRight:4}}></span>Présent</span>
+          <span><span style={{display:"inline-block",width:10,height:10,borderRadius:2,background:"rgba(240,78,94,0.35)",marginRight:4}}></span>Absent</span>
+        </div>
+        <div className="chart-wrap">
+          <MonthlyChart data={rows} />
+        </div>
+      </div>
+
+      <div className="monthly-table-wrap">
+        <div className="monthly-table-header">Détail journalier — Mai 2025</div>
+        <table className="monthly-table">
+          <thead>
+            <tr>
+              <th>Date</th><th>Arrivée</th><th>Départ</th>
+              <th>Durée</th><th>Retard</th><th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r, i) => (
+              <tr key={i}>
+                <td style={{fontWeight:500}}>{r.date}</td>
+                <td style={{fontFamily:'monospace'}}>{r.arrivee}</td>
+                <td style={{fontFamily:'monospace'}}>{r.depart}</td>
+                <td>{r.travail}</td>
+                <td>
+                  {r.retard > 0
+                    ? <span className="exceeded-pill">+{r.retard}min</span>
+                    : <span className="ok-pill">—</span>}
+                </td>
+                <td>
+                  {r.statut === "present"
+                    ? <span className="ok-pill">Présent</span>
+                    : <span className="exceeded-pill">Absent</span>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// ===================== APP =====================
+const DEFAULT_API = (typeof window !== "undefined" ? window.location.origin : "") + "/api/stats";
+
+function App() {
+  const [tab,       setTab]       = useState("daily");
+  const [apiUrl,    setApiUrl]    = useState(DEFAULT_API);
+  const [inputUrl,  setInputUrl]  = useState(DEFAULT_API);
+  const [data,      setData]      = useState(makeDemoData());
+  const [loading,   setLoading]   = useState(false);
+  const [error,     setError]     = useState(null);
+  const [isDemo,    setIsDemo]    = useState(true);
+  const [selIdx,    setSelIdx]    = useState(0);
+
+  const employes = data?.employes || [];
+  const selected = employes[selIdx] || employes[0];
+
+  const fetchData = useCallback(async (url) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      setData(json);
+      setIsDemo(false);
+    } catch (e) {
+      setError(`Impossible de joindre l'API : ${e.message}. Les données de démonstration sont affichées.`);
+      setData(makeDemoData());
+      setIsDemo(true);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Auto-fetch au chargement initial
+  useEffect(() => {
+    fetchData(apiUrl);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Auto-refresh toutes les 15 secondes
+  useEffect(() => {
+    const id = setInterval(() => fetchData(apiUrl), 15000);
+    return () => clearInterval(id);
+  }, [apiUrl, fetchData]);
+
+  const handleApply = () => {
+    setApiUrl(inputUrl);
+    fetchData(inputUrl);
+  };
+
+  return (
+    <div>
+      {/* TOPBAR */}
+      <div className="topbar">
+        <div className="logo">
+          <div className="logo-icon">⏱</div>
+          UptimeRobot Attendance
+        </div>
+        <div className="topbar-center">
+          <div className="tab-pill">
+            <button className={tab==="daily"?"active":""} onClick={()=>setTab("daily")}>Quotidien</button>
+            <button className={tab==="monthly"?"active":""} onClick={()=>setTab("monthly")}>Mensuel</button>
+          </div>
+        </div>
+        <div className="topbar-right">
+          <div className="live-indicator">
+            <div className="live-dot" />
+            {isDemo ? "Démo" : "En direct"}
+          </div>
+          <button
+            className={`refresh-btn ${loading ? "spin" : ""}`}
+            onClick={() => fetchData(apiUrl)}
+            title="Rafraîchir"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M23 4v6h-6M1 20v-6h6"/>
+              <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div className="app-shell">
+        {/* SIDEBAR */}
+        <div className="sidebar">
+          {/* API config */}
+          <div style={{padding:"0 4px 12px"}}>
+            <div className="section-title">URL de l'API bot</div>
+            <div className="config-bar" style={{flexDirection:"column",alignItems:"stretch",gap:6}}>
+              <input
+                value={inputUrl}
+                onChange={e => setInputUrl(e.target.value)}
+                placeholder="https://votre-bot.onrender.com/api/stats"
+                onKeyDown={e => e.key === "Enter" && handleApply()}
+              />
+              <button className="apply-btn" onClick={handleApply}>Connecter →</button>
+            </div>
+            {isDemo && (
+              <div style={{fontSize:10,color:"var(--text3)",marginTop:6,padding:"0 2px"}}>
+                Mode démonstration — configurez l'URL de votre bot ci-dessus
+              </div>
+            )}
+          </div>
+
+          <div className="sidebar-label">Employés ({employes.length})</div>
+          {employes.map((e, i) => {
+            const ac = avatarColor(i);
+            return (
+              <div
+                key={e.user_id}
+                className={`user-row ${selIdx===i?"active":""}`}
+                onClick={() => setSelIdx(i)}
+              >
+                <div className="user-avatar" style={{background:ac.bg,color:ac.color}}>
+                  {initials(e.nom)}
+                </div>
+                <div className="user-row-info">
+                  <div className="user-row-name">{e.nom}</div>
+                  <div className="user-row-id">#{e.user_id}</div>
+                </div>
+                <div className={`status-dot ${e.statut==="present"?"dot-present":e.statut==="pause"?"dot-pause":"dot-absent"}`}/>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* MAIN */}
+        <div className="main-content">
+          {error && (
+            <div className="error-banner">⚠ {error}</div>
+          )}
+
+          {tab === "daily" && selected && (
+            <DailyView emp={selected} colorIdx={selIdx} />
+          )}
+          {tab === "daily" && !selected && (
+            <div className="empty-state">
+              <div className="empty-icon">👥</div>
+              <div className="empty-text">Aucun employé actif</div>
+            </div>
+          )}
+          {tab === "monthly" && (
+            <MonthlyView />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
