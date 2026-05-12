@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>BOT-MANEMAN · Attendance</title>
+<title>UptimeRobot Attendance</title>
 <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
@@ -16,26 +16,25 @@
   --bg2:        #151820;
   --bg3:        #1c1f2a;
   --bg4:        #232736;
-  --bg5:        #2a2e3f;
   --border:     rgba(255,255,255,0.07);
   --border2:    rgba(255,255,255,0.12);
   --text:       #e8eaf0;
   --text2:      #8b90a0;
   --text3:      #555b6e;
   --green:      #22d37a;
-  --green-bg:   rgba(34,211,122,0.08);
-  --green-b:    rgba(34,211,122,0.22);
+  --green-bg:   rgba(34,211,122,0.1);
+  --green-b:    rgba(34,211,122,0.25);
   --red:        #f04e5e;
-  --red-bg:     rgba(240,78,94,0.08);
-  --red-b:      rgba(240,78,94,0.22);
+  --red-bg:     rgba(240,78,94,0.1);
+  --red-b:      rgba(240,78,94,0.25);
   --amber:      #f5a623;
-  --amber-bg:   rgba(245,166,35,0.08);
-  --amber-b:    rgba(245,166,35,0.22);
+  --amber-bg:   rgba(245,166,35,0.1);
+  --amber-b:    rgba(245,166,35,0.25);
   --blue:       #4d9fff;
-  --blue-bg:    rgba(77,159,255,0.08);
-  --blue-b:     rgba(77,159,255,0.22);
+  --blue-bg:    rgba(77,159,255,0.1);
+  --blue-b:     rgba(77,159,255,0.25);
   --purple:     #a78bfa;
-  --purple-bg:  rgba(167,139,250,0.08);
+  --purple-bg:  rgba(167,139,250,0.1);
   --accent:     #22d37a;
   --radius:     10px;
   --radius-lg:  14px;
@@ -53,17 +52,17 @@ button { cursor: pointer; font-family: inherit; }
 input  { font-family: inherit; }
 
 /* ===================== SCROLLBAR ===================== */
-::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
 
 /* ===================== TOPBAR ===================== */
 .topbar {
   position: sticky; top: 0; z-index: 200;
-  background: rgba(13,15,20,0.93);
-  backdrop-filter: blur(18px);
+  background: rgba(13,15,20,0.92);
+  backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
-  height: 58px;
+  height: 60px;
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 28px;
 }
@@ -113,15 +112,15 @@ input  { font-family: inherit; }
   transition: all 0.15s;
 }
 .refresh-btn:hover { background: var(--bg4); color: var(--text); }
+.refresh-btn.spin svg { animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.spin-icon { animation: spin 0.8s linear infinite; display: inline-block; }
 
 /* ===================== LAYOUT ===================== */
-.app-shell { display: flex; min-height: calc(100vh - 58px); }
+.app-shell { display: flex; min-height: calc(100vh - 60px); }
 
 /* Sidebar */
 .sidebar {
-  width: 256px; flex-shrink: 0;
+  width: 260px; flex-shrink: 0;
   background: var(--bg2);
   border-right: 1px solid var(--border);
   padding: 16px 10px;
@@ -160,11 +159,11 @@ input  { font-family: inherit; }
 .dot-absent  { background: var(--text3); }
 
 /* Main content */
-.main-content { flex: 1; overflow-y: auto; padding: 22px 26px; }
+.main-content { flex: 1; overflow-y: auto; padding: 24px 28px; }
 
 /* ===================== SECTION TITLE ===================== */
 .section-title {
-  font-size: 10px; font-weight: 600; letter-spacing: 0.09em;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.09em;
   color: var(--text3); text-transform: uppercase; margin-bottom: 12px;
 }
 
@@ -172,16 +171,16 @@ input  { font-family: inherit; }
 .profile-header {
   display: flex; align-items: flex-start; justify-content: space-between;
   background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--radius-xl); padding: 18px 22px;
-  margin-bottom: 18px;
+  border-radius: var(--radius-xl); padding: 20px 24px;
+  margin-bottom: 20px;
 }
-.profile-left { display: flex; align-items: center; gap: 14px; }
+.profile-left { display: flex; align-items: center; gap: 16px; }
 .profile-avatar {
-  width: 50px; height: 50px; border-radius: 14px;
+  width: 52px; height: 52px; border-radius: 14px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 17px; font-weight: 700;
+  font-size: 18px; font-weight: 700;
 }
-.profile-name { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 2px; }
+.profile-name { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 2px; }
 .profile-uid  { font-size: 12px; color: var(--text3); font-family: monospace; }
 .profile-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
 .status-badge {
@@ -197,8 +196,8 @@ input  { font-family: inherit; }
 /* ===================== METRICS GRID ===================== */
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
-  gap: 10px; margin-bottom: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px; margin-bottom: 20px;
 }
 .metric-card {
   background: var(--bg2); border: 1px solid var(--border);
@@ -227,7 +226,7 @@ input  { font-family: inherit; }
 .metric-value.purple { color: var(--purple); }
 
 /* ===================== TWO-COL ===================== */
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
 
 /* ===================== INFO CARD ===================== */
 .info-card {
@@ -235,7 +234,7 @@ input  { font-family: inherit; }
   border-radius: var(--radius-lg); padding: 16px 18px;
 }
 .info-card-title {
-  font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
   text-transform: uppercase; color: var(--text3); margin-bottom: 12px;
 }
 .info-row {
@@ -263,6 +262,7 @@ input  { font-family: inherit; }
   display: flex; align-items: center; gap: 6px;
   font-size: 11px; color: var(--text2); margin-bottom: 6px;
 }
+.pause-item-emoji { font-size: 14px; }
 .pause-count { font-size: 18px; font-weight: 700; }
 .pause-dur   { font-size: 11px; color: var(--text3); margin-top: 1px; }
 
@@ -297,169 +297,39 @@ input  { font-family: inherit; }
 .sessions-table tr:last-child td { border-bottom: none; }
 .sessions-table tr:hover td { background: rgba(255,255,255,0.02); }
 .exceeded-pill {
-  display: inline-block; padding: 2px 8px; border-radius: 999px;
+  display: inline-block; padding: 1px 7px; border-radius: 999px;
   font-size: 10px; font-weight: 600;
   background: var(--red-bg); border: 1px solid var(--red-b); color: var(--red);
 }
 .ok-pill {
-  display: inline-block; padding: 2px 8px; border-radius: 999px;
+  display: inline-block; padding: 1px 7px; border-radius: 999px;
   font-size: 10px; font-weight: 600;
   background: var(--green-bg); border: 1px solid var(--green-b); color: var(--green);
 }
 
-/* ===================== OFF WORK SUMMARY PANEL ===================== */
-.offwork-panel {
-  border-radius: var(--radius-xl); overflow: hidden;
-  border: 1px solid var(--border); margin-bottom: 18px;
-}
-.offwork-panel-header {
-  padding: 14px 20px;
-  background: var(--bg3);
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 10px;
-}
-.offwork-panel-title { font-size: 14px; font-weight: 600; }
-.offwork-panel-date  { font-size: 12px; color: var(--text3); margin-left: auto; font-family: monospace; }
-
-.offwork-cols {
-  display: grid; grid-template-columns: 1fr 1fr; min-height: 180px;
-}
-.offwork-col {
-  padding: 18px 20px;
-}
-.offwork-col:first-child {
-  border-right: 1px solid var(--border);
-}
-.offwork-col-title {
-  font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
-  text-transform: uppercase; margin-bottom: 14px;
-  display: flex; align-items: center; gap: 7px;
-}
-.col-ok    { color: var(--green); }
-.col-alert { color: var(--red); }
-.col-ok-icon    { font-size: 13px; }
-.col-alert-icon { font-size: 13px; }
-
-.offwork-emp-row {
-  display: flex; align-items: center; gap: 10px;
-  padding: 7px 10px; border-radius: var(--radius);
-  margin-bottom: 5px; background: var(--bg3);
-  border: 1px solid var(--border);
-}
-.offwork-emp-row.ok-row    { border-color: var(--green-b); background: var(--green-bg); }
-.offwork-emp-row.alert-row { border-color: var(--red-b);   background: var(--red-bg); }
-.offwork-emp-avatar {
-  width: 28px; height: 28px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 700; flex-shrink: 0;
-}
-.offwork-emp-name { font-size: 12px; font-weight: 500; flex: 1; }
-.offwork-emp-meta { font-size: 11px; color: var(--text3); margin-top: 1px; }
-.offwork-emp-badge {
-  font-size: 10px; font-weight: 600; padding: 2px 8px;
-  border-radius: 999px; white-space: nowrap;
-}
-.badge-ok    { background: var(--green-bg); border: 1px solid var(--green-b); color: var(--green); }
-.badge-alert { background: var(--red-bg);   border: 1px solid var(--red-b);   color: var(--red); }
-.offwork-empty {
-  font-size: 12px; color: var(--text3);
-  padding: 10px 0; font-style: italic;
-}
-
-/* ===================== CALENDAR ===================== */
-.calendar-wrap { margin-bottom: 18px; }
-.calendar-nav {
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 14px;
-}
-.calendar-nav-title {
-  font-size: 14px; font-weight: 600; flex: 1; text-align: center;
-}
-.cal-nav-btn {
-  width: 30px; height: 30px; border-radius: 8px;
-  border: 1px solid var(--border2); background: var(--bg3);
-  color: var(--text2); font-size: 16px;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.14s;
-}
-.cal-nav-btn:hover { background: var(--bg4); color: var(--text); }
-
-.calendar-grid {
-  display: grid; grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-}
-.cal-day-header {
-  text-align: center; font-size: 10px; font-weight: 600;
-  letter-spacing: 0.07em; text-transform: uppercase;
-  color: var(--text3); padding: 6px 0;
-}
-.cal-day {
-  aspect-ratio: 1;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  cursor: pointer; transition: all 0.13s;
-  position: relative; overflow: hidden;
-  min-height: 44px;
-}
-.cal-day.empty { cursor: default; }
-.cal-day.other-month { opacity: 0.3; }
-.cal-day:not(.empty):hover { border-color: var(--border2); background: var(--bg3); }
-.cal-day.selected { border-color: var(--accent) !important; background: rgba(34,211,122,0.07) !important; }
-.cal-day.today .cal-day-num { color: var(--accent); font-weight: 700; }
-
-.cal-day-num {
-  font-size: 13px; font-weight: 500; line-height: 1;
-}
-.cal-day-dot {
-  width: 5px; height: 5px; border-radius: 50%; margin-top: 3px;
-}
-.cal-day.day-present { background: rgba(34,211,122,0.06); border-color: rgba(34,211,122,0.15); }
-.cal-day.day-absent  { background: rgba(240,78,94,0.05);  border-color: rgba(240,78,94,0.12); }
-.cal-day.day-offwork { background: rgba(77,159,255,0.05); border-color: rgba(77,159,255,0.12); }
-.cal-day.day-weekend { opacity: 0.45; }
-
-.dot-present-c { background: var(--green); }
-.dot-absent-c  { background: var(--red); }
-.dot-offwork-c { background: var(--blue); }
-.dot-future    { background: var(--text3); }
-
-/* Cal detail panel */
-.cal-detail {
-  margin-top: 14px;
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); padding: 16px 18px;
-  animation: fadeUp 0.2s ease;
-}
-@keyframes fadeUp { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform:none; } }
-
-.cal-detail-date {
-  font-size: 13px; font-weight: 600; margin-bottom: 12px;
-  display: flex; align-items: center; gap: 8px;
-}
-.cal-detail-grid {
+/* ===================== MONTHLY ===================== */
+.monthly-metrics {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr));
-  gap: 8px; margin-bottom: 10px;
+  gap: 10px; margin-bottom: 20px;
 }
-.cal-detail-stat {
-  background: var(--bg3); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 9px 12px;
+.chart-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 16px 18px; margin-bottom: 20px;
 }
-.cal-detail-stat-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; }
-.cal-detail-stat-val   { font-size: 15px; font-weight: 700; margin-top: 2px; }
-
-/* ===================== MONTHLY TABLE ===================== */
+.chart-card-title {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text3); margin-bottom: 14px;
+}
+.chart-wrap { position: relative; width: 100%; height: 200px; }
 .monthly-table-wrap {
   background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 18px;
+  border-radius: var(--radius-lg); overflow: hidden;
 }
 .monthly-table-header {
   padding: 12px 18px;
   border-bottom: 1px solid var(--border);
-  font-size: 11px; font-weight: 600; letter-spacing: 0.07em;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
   text-transform: uppercase; color: var(--text3);
-  display: flex; align-items: center; justify-content: space-between;
 }
 .monthly-table {
   width: 100%; border-collapse: collapse; font-size: 12px;
@@ -476,88 +346,116 @@ input  { font-family: inherit; }
 .monthly-table tr:last-child td { border-bottom: none; }
 .monthly-table tr:hover td { background: rgba(255,255,255,0.02); }
 
-/* ===================== CHART ===================== */
-.chart-card {
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); padding: 16px 18px; margin-bottom: 18px;
-}
-.chart-card-title {
-  font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
-  text-transform: uppercase; color: var(--text3); margin-bottom: 14px;
-}
-.chart-wrap { position: relative; width: 100%; height: 190px; }
-
-/* ===================== MONTHLY METRICS ===================== */
-.monthly-metrics {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr));
-  gap: 10px; margin-bottom: 18px;
-}
-
 /* ===================== EMPTY / ERROR STATES ===================== */
 .empty-state {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   min-height: 300px; color: var(--text3); gap: 12px;
 }
-.empty-icon { font-size: 38px; }
+.empty-icon { font-size: 40px; }
 .empty-text { font-size: 14px; }
+
 .error-banner {
   background: var(--red-bg); border: 1px solid var(--red-b);
   border-radius: var(--radius); padding: 10px 14px;
   font-size: 13px; color: var(--red); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
 }
 
 /* ===================== API CONFIG ===================== */
 .config-bar {
-  display: flex; flex-direction: column; gap: 6px;
+  display: flex; align-items: center; gap: 8px;
   background: var(--bg3); border: 1px solid var(--border2);
-  border-radius: var(--radius); padding: 8px 10px;
+  border-radius: var(--radius); padding: 6px 10px;
 }
 .config-bar input {
   background: transparent; border: none; outline: none;
   color: var(--text); font-size: 12px; font-family: monospace;
+  width: 260px;
 }
 .config-bar input::placeholder { color: var(--text3); }
+.config-bar-label { font-size: 11px; color: var(--text3); white-space: nowrap; }
 .apply-btn {
-  padding: 5px 12px; border-radius: 6px;
+  padding: 4px 12px; border-radius: 6px;
   background: var(--accent); color: #000; font-size: 12px; font-weight: 600;
   border: none; transition: opacity 0.15s;
 }
 .apply-btn:hover { opacity: 0.85; }
 
-/* ===================== TABS SECONDARY ===================== */
-.sub-tab-bar {
-  display: flex; gap: 4px; margin-bottom: 18px;
-  border-bottom: 1px solid var(--border); padding-bottom: 0;
-}
-.sub-tab-btn {
-  padding: 7px 16px; border: none; background: transparent;
-  font-size: 13px; font-weight: 500; color: var(--text3);
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px; transition: all 0.14s;
-}
-.sub-tab-btn.active { color: var(--text); border-bottom-color: var(--accent); }
-.sub-tab-btn:hover { color: var(--text2); }
+/* ===================== OFF WORK PANEL ===================== */
+.offwork-panel { border-radius: var(--radius-xl); overflow: hidden; border: 1px solid var(--border); margin-bottom: 18px; }
+.offwork-panel-header { padding: 14px 20px; background: var(--bg3); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+.offwork-panel-title { font-size: 14px; font-weight: 600; }
+.offwork-panel-date  { font-size: 12px; color: var(--text3); margin-left: auto; font-family: monospace; }
+.offwork-cols { display: grid; grid-template-columns: 1fr 1fr; min-height: 160px; }
+.offwork-col  { padding: 16px 18px; }
+.offwork-col:first-child { border-right: 1px solid var(--border); }
+.offwork-col-title { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
+.col-ok    { color: var(--green); }
+.col-alert { color: var(--red); }
+.offwork-emp-row { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: var(--radius); margin-bottom: 5px; background: var(--bg3); border: 1px solid var(--border); }
+.offwork-emp-row.ok-row    { border-color: var(--green-b); background: var(--green-bg); }
+.offwork-emp-row.alert-row { border-color: var(--red-b);   background: var(--red-bg); }
+.offwork-emp-avatar { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.offwork-emp-name { font-size: 12px; font-weight: 500; }
+.offwork-emp-meta { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.offwork-emp-badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.badge-ok    { background: var(--green-bg); border: 1px solid var(--green-b); color: var(--green); }
+.badge-alert { background: var(--red-bg);   border: 1px solid var(--red-b);   color: var(--red); }
+.offwork-empty { font-size: 12px; color: var(--text3); padding: 10px 0; font-style: italic; }
+
+/* ===================== CALENDAR ===================== */
+.calendar-wrap { margin-bottom: 18px; }
+.calendar-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.calendar-nav-title { font-size: 14px; font-weight: 600; flex: 1; text-align: center; }
+.cal-nav-btn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.14s; }
+.cal-nav-btn:hover { background: var(--bg4); color: var(--text); }
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-day-header { text-align: center; font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text3); padding: 6px 0; }
+.cal-day { aspect-ratio: 1; border-radius: 8px; border: 1px solid transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.13s; position: relative; min-height: 44px; }
+.cal-day.empty { cursor: default; }
+.cal-day.other-month { opacity: 0.3; }
+.cal-day:not(.empty):hover { border-color: var(--border2); background: var(--bg3); }
+.cal-day.selected { border-color: var(--accent) !important; background: rgba(34,211,122,0.07) !important; }
+.cal-day.today .cal-day-num { color: var(--accent); font-weight: 700; }
+.cal-day-num { font-size: 13px; font-weight: 500; line-height: 1; }
+.cal-day-dot { width: 5px; height: 5px; border-radius: 50%; margin-top: 3px; }
+.cal-day.day-present { background: rgba(34,211,122,0.06); border-color: rgba(34,211,122,0.15); }
+.cal-day.day-absent  { background: rgba(240,78,94,0.05);  border-color: rgba(240,78,94,0.12); }
+.cal-day.day-offwork { background: rgba(77,159,255,0.05); border-color: rgba(77,159,255,0.12); }
+.cal-day.day-weekend { opacity: 0.4; }
+.dot-present-c { background: var(--green); }
+.dot-absent-c  { background: var(--red); }
+.dot-offwork-c { background: var(--amber); }
+.cal-detail { margin-top: 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 18px; }
+.cal-detail-date { font-size: 13px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.cal-detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap: 8px; }
+.cal-detail-stat { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 9px 12px; }
+.cal-detail-stat-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; }
+.cal-detail-stat-val   { font-size: 15px; font-weight: 700; margin-top: 2px; }
 
 /* ===================== LEGEND ===================== */
-.legend-row {
-  display: flex; gap: 16px; flex-wrap: wrap;
-  margin-bottom: 12px; font-size: 11px; color: var(--text3);
-}
+.legend-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; font-size: 11px; color: var(--text3); }
 .legend-item { display: flex; align-items: center; gap: 5px; }
 .legend-dot  { width: 9px; height: 9px; border-radius: 50%; }
 
+/* ===================== SUB TABS ===================== */
+.sub-tab-bar { display: flex; gap: 4px; margin-bottom: 18px; border-bottom: 1px solid var(--border); }
+.sub-tab-btn { padding: 7px 16px; border: none; background: transparent; font-size: 13px; font-weight: 500; color: var(--text3); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.14s; }
+.sub-tab-btn.active { color: var(--text); border-bottom-color: var(--accent); }
+.sub-tab-btn:hover  { color: var(--text2); }
+
+/* ===================== MONTHLY METRICS ===================== */
+.monthly-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap: 10px; margin-bottom: 18px; }
+
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 900px) {
-  .sidebar { width: 210px; }
-  .two-col { grid-template-columns: 1fr; }
-  .offwork-cols { grid-template-columns: 1fr; }
-  .offwork-col:first-child { border-right: none; border-bottom: 1px solid var(--border); }
+  .sidebar    { width: 220px; }
+  .two-col    { grid-template-columns: 1fr; }
 }
 @media (max-width: 680px) {
-  .sidebar { display: none; }
-  .main-content { padding: 14px; }
-  .topbar { padding: 0 14px; }
-  .cal-day { min-height: 36px; }
+  .sidebar    { display: none; }
+  .main-content { padding: 16px; }
+  .topbar     { padding: 0 16px; }
 }
 </style>
 </head>
@@ -579,17 +477,18 @@ function fmtSec(totalSec) {
   if (m > 0) return `${m}min`;
   return `${sc}s`;
 }
+
 function fmtHM(totalSec) {
   if (!totalSec || totalSec <= 0) return "0h00";
   const h = Math.floor(totalSec / 3600);
   const m = Math.floor((totalSec % 3600) / 60);
   return `${h}h${String(m).padStart(2,'0')}`;
 }
+
 function initials(name) {
   if (!name) return "?";
   return name.split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase();
 }
-function padZ(n) { return String(n).padStart(2,'0'); }
 
 const AVATAR_COLORS = [
   { bg: "rgba(34,211,122,0.15)",  color: "#22d37a" },
@@ -607,15 +506,11 @@ const BREAK_LABELS = {
   BREAK_SMOKE:        { label: "Cigarette",     emoji: "🚬", color: "red"   },
 };
 
-const MONTHS_FR = ["Janvier","Février","Mars","Avril","Mai","Juin",
-                   "Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
-const DAYS_FR = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
-
 // ===================== DEMO DATA =====================
 function makeDemoData() {
   const now = new Date();
   const hhmm = t => t.toTimeString().slice(0,5);
-  const workStart = new Date(now); workStart.setHours(7,42,0,0);
+  const workStart = new Date(now); workStart.setHours(8,2,0,0);
   const elapsed   = (now - workStart) / 1000;
 
   return {
@@ -624,7 +519,7 @@ function makeDemoData() {
     employes: [
       {
         user_id: 101, nom: "Rakoto Jean", username: "rakoto_j", statut: "present",
-        heure_arrivee: "07:42", heure_depart: "--:--",
+        heure_arrivee: "08:02", heure_depart: "--:--",
         retard_min: 2, depart_anticipe_min: 0,
         temps_travail_sec: elapsed, temps_effectif_sec: elapsed - 3780,
         pauses_total_sec: 3780, depassements_sec: 240,
@@ -649,14 +544,14 @@ function makeDemoData() {
         retard_min: 0, depart_anticipe_min: 0,
         temps_travail_sec: 0, temps_effectif_sec: 0,
         pauses_total_sec: 0, depassements_sec: 0,
-        pause_repas:{count:0,duree_sec:0}, pauses_courtes:{count:0,duree_sec:0},
+        pause_repas: {count:0,duree_sec:0}, pauses_courtes:{count:0,duree_sec:0},
         pauses_longues:{count:0,duree_sec:0}, pauses_cigarette:{count:0,duree_sec:0},
         departs_temporaires:{count:0,duree_sec:0}, activites_total_sec:0,
         pause_courante: null, sessions: [], last_update: hhmm(now)
       },
       {
         user_id: 103, nom: "Andry Harison", username: "andry_h", statut: "pause",
-        heure_arrivee: "07:38", heure_depart: "--:--",
+        heure_arrivee: "07:55", heure_depart: "--:--",
         retard_min: 0, depart_anticipe_min: 0,
         temps_travail_sec: elapsed + 420,
         temps_effectif_sec: elapsed + 420 - 2760,
@@ -676,74 +571,38 @@ function makeDemoData() {
           { type:"BREAK_SMOKE",        label:"Smoke",        start:"11:00:00", end:"11:08:00", duration:480,  exceeded:true  },
         ],
         last_update: hhmm(now)
-      },
-      {
-        user_id: 104, nom: "Hery Fanja", username: "hery_f", statut: "absent",
-        heure_arrivee: "18:29", heure_depart: "18:29",
-        retard_min: 0, depart_anticipe_min: 0,
-        temps_travail_sec: 38340, temps_effectif_sec: 35100,
-        pauses_total_sec: 3240, depassements_sec: 600,
-        pause_repas:      { count: 1, duree_sec: 1800 },
-        pauses_courtes:   { count: 2, duree_sec: 480  },
-        pauses_longues:   { count: 0, duree_sec: 0    },
-        pauses_cigarette: { count: 5, duree_sec: 960  },
-        departs_temporaires:{count:8,duree_sec:3240}, activites_total_sec:38340,
-        pause_courante: null,
-        sessions: [
-          { type:"BREAK_FOOD",         label:"Eat",          start:"12:00:00", end:"12:30:00", duration:1800, exceeded:false },
-          { type:"BREAK_SMOKE",        label:"Smoke",        start:"09:00:00", end:"09:18:00", duration:1080, exceeded:true  },
-          { type:"BREAK_TOILET_SMALL", label:"Small toilet", start:"10:00:00", end:"10:08:00", duration:480,  exceeded:true  },
-          { type:"BREAK_TOILET_SMALL", label:"Small toilet", start:"14:00:00", end:"14:00:00", duration:0,    exceeded:false },
-        ],
-        last_update: "18:29"
       }
     ]
   };
 }
 
-// ===================== DEMO MONTHLY (par employé) =====================
-function makeDemoHistory(userId) {
-  const today = new Date();
-  const year  = today.getFullYear();
-  const month = today.getMonth();
-  const days  = new Date(year, month+1, 0).getDate();
-  const history = {};
-
-  for (let d = 1; d <= days; d++) {
-    const dt = new Date(year, month, d);
-    if (dt > today) break;
-    const dow = dt.getDay();
-    const isWeekend = dow === 0 || dow === 6;
-    if (isWeekend) continue;
-
-    // Simulation déterministe selon user_id + jour
-    const seed = (userId * 13 + d * 7) % 100;
-    const absent = seed < 12;
-
-    if (absent) {
-      history[`${year}-${padZ(month+1)}-${padZ(d)}`] = { statut: "absent" };
-    } else {
-      const retardMin = seed < 25 ? Math.floor((seed % 5) * 6 + 1) : 0;
-      const depassSec = seed > 70 ? (seed % 3 + 1) * 120 : 0;
-      const offWorkDone = dt.getDate() < today.getDate() || (dt.getDate() === today.getDate() && today.getHours() >= 18);
-      history[`${year}-${padZ(month+1)}-${padZ(d)}`] = {
-        statut:         offWorkDone ? "offwork" : "present",
-        heure_arrivee:  retardMin > 0 ? `07:${padZ(40+retardMin)}` : "07:38",
-        heure_depart:   offWorkDone ? "18:27" : "--:--",
-        retard_min:     retardMin,
-        depassements_sec: depassSec,
-        temps_effectif_sec: 36000 - depassSec,
-      };
-    }
+const DEMO_MONTHLY = (() => {
+  const rows = [];
+  const labels = ["01","02","03","04","05","06","07","08","09","10",
+                   "11","12","13","14","15","16","17","18","19","20"];
+  const presences = [1,1,0,1,1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1];
+  const hours =     [8.2,8.4,0,7.8,8.9,8.3,7.7,0,8.0,8.6,8.1,0,8.5,8.2,7.9,8.4,0,8.7,8.0,8.3];
+  const delays =    [2,0,0,10,0,0,30,0,5,0,0,0,0,8,0,0,0,3,0,0];
+  for (let i=0;i<labels.length;i++) {
+    rows.push({
+      date: `${labels[i]}/05`,
+      arrivee: presences[i] ? `0${7 + Math.floor(Math.random()*1)}:${String(Math.floor(Math.random()*60)).padStart(2,'0')}` : "--:--",
+      depart:  presences[i] ? "19:00" : "--:--",
+      travail: fmtHM(hours[i]*3600),
+      heures:  hours[i],
+      retard:  delays[i],
+      statut:  presences[i] ? "present" : "absent"
+    });
   }
-  return history;
-}
+  return rows;
+})();
 
 // ===================== COMPONENTS =====================
+
 function StatusBadge({ statut }) {
   if (statut === "present") return <span className="status-badge badge-present">● Présent</span>;
   if (statut === "pause")   return <span className="status-badge badge-pause">◐ En pause</span>;
-  return <span className="status-badge badge-absent">○ Absent / Hors service</span>;
+  return <span className="status-badge badge-absent">○ Absent</span>;
 }
 
 function BreakBanner({ pause_courante }) {
@@ -752,11 +611,13 @@ function BreakBanner({ pause_courante }) {
     const id = setInterval(() => setTick(t => t+1), 1000);
     return () => clearInterval(id);
   }, []);
+
   if (!pause_courante) return null;
   const { type, elapsed, limit, exceeded } = pause_courante;
-  const info = BREAK_LABELS[type] || { label: "Pause", emoji: "⏸" };
-  const live = elapsed + tick;
-  const over = live - limit;
+  const info  = BREAK_LABELS[type] || { label: "Pause", emoji: "⏸" };
+  const live  = elapsed + tick;
+  const over  = live - limit;
+
   return (
     <div className="break-banner">
       <div className="break-banner-left">
@@ -776,303 +637,15 @@ function BreakBanner({ pause_courante }) {
   );
 }
 
-// ===================== OFF WORK SUMMARY PANEL =====================
-// Affiche tous les employés du jour séparés en "conformes" et "infractions"
-function OffWorkPanel({ employes, colorMap }) {
-  const today = new Date().toLocaleDateString('fr-FR', { day:'2-digit', month:'long', year:'numeric' });
-
-  // Un employé est "terminé" si heure_depart est renseigné (pas "--:--")
-  const done = employes.filter(e => e.heure_depart && e.heure_depart !== "--:--");
-  // Parmi les actifs, ceux qui ont des infractions visibles (retard ou dépassements)
-  const active = employes.filter(e => !e.heure_depart || e.heure_depart === "--:--");
-
-  // Conformes = pas de retard ET pas de dépassements (parmi ceux ayant pointé)
-  const conformes = done.filter(e => e.retard_min === 0 && e.depassements_sec === 0);
-  const infractions = done.filter(e => e.retard_min > 0 || e.depassements_sec > 0);
-  // Actifs avec infractions déjà visibles
-  const activesAlert = active.filter(e => e.retard_min > 0 || e.depassements_sec > 0);
-
-  const allOk    = conformes;
-  const allAlert = [...infractions, ...activesAlert];
-
-  return (
-    <div className="offwork-panel">
-      <div className="offwork-panel-header">
-        <span style={{fontSize:16}}>📋</span>
-        <span className="offwork-panel-title">Résultats de la journée</span>
-        <span className="offwork-panel-date">{today}</span>
-      </div>
-      <div className="offwork-cols">
-        {/* Colonne CONFORMES */}
-        <div className="offwork-col">
-          <div className="offwork-col-title col-ok">
-            <span className="col-ok-icon">✅</span>
-            Conformes ({allOk.length})
-          </div>
-          {allOk.length === 0 && <div className="offwork-empty">Aucun employé conforme pour l'instant.</div>}
-          {allOk.map((e, i) => {
-            const ac = colorMap[e.user_id] || avatarColor(0);
-            return (
-              <div key={e.user_id} className="offwork-emp-row ok-row">
-                <div className="offwork-emp-avatar" style={{background:ac.bg,color:ac.color}}>
-                  {initials(e.nom)}
-                </div>
-                <div style={{flex:1,minWidth:0}}>
-                  <div className="offwork-emp-name">{e.nom}</div>
-                  <div className="offwork-emp-meta">
-                    {e.heure_arrivee !== "--:--" ? `Arrivée ${e.heure_arrivee}` : ""}
-                    {e.heure_depart && e.heure_depart !== "--:--" ? ` · Départ ${e.heure_depart}` : ""}
-                  </div>
-                </div>
-                <span className="offwork-emp-badge badge-ok">OK ✓</span>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Colonne INFRACTIONS */}
-        <div className="offwork-col">
-          <div className="offwork-col-title col-alert">
-            <span className="col-alert-icon">⚠️</span>
-            Infractions ({allAlert.length})
-          </div>
-          {allAlert.length === 0 && <div className="offwork-empty">Aucune infraction détectée.</div>}
-          {allAlert.map((e, i) => {
-            const ac = colorMap[e.user_id] || avatarColor(0);
-            const tags = [];
-            if (e.retard_min > 0) tags.push(`Retard +${e.retard_min}min`);
-            if (e.depassements_sec > 0) tags.push(`Dépassement ${fmtSec(e.depassements_sec)}`);
-            return (
-              <div key={e.user_id} className="offwork-emp-row alert-row">
-                <div className="offwork-emp-avatar" style={{background:ac.bg,color:ac.color}}>
-                  {initials(e.nom)}
-                </div>
-                <div style={{flex:1,minWidth:0}}>
-                  <div className="offwork-emp-name">{e.nom}</div>
-                  <div className="offwork-emp-meta" style={{color:'var(--red)'}}>
-                    {tags.join(' · ')}
-                  </div>
-                </div>
-                <span className="offwork-emp-badge badge-alert">⚠ Alerte</span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ===================== CALENDAR =====================
-function CalendarView({ emp, colorIdx, history }) {
-  const today   = new Date();
-  const [viewYear,  setViewYear]  = useState(today.getFullYear());
-  const [viewMonth, setViewMonth] = useState(today.getMonth());
-  const [selDay,    setSelDay]    = useState(null);
-
-  const ac = avatarColor(colorIdx);
-
-  function prevMonth() {
-    if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y-1); }
-    else setViewMonth(m => m-1);
-    setSelDay(null);
-  }
-  function nextMonth() {
-    if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y+1); }
-    else setViewMonth(m => m+1);
-    setSelDay(null);
-  }
-
-  // Construire la grille du mois
-  const firstDay = new Date(viewYear, viewMonth, 1);
-  // Lun=0..Dim=6
-  let startDow = firstDay.getDay() - 1;
-  if (startDow < 0) startDow = 6;
-  const daysInMonth  = new Date(viewYear, viewMonth+1, 0).getDate();
-  const daysInPrev   = new Date(viewYear, viewMonth,   0).getDate();
-
-  const cells = [];
-  // Jours du mois précédent
-  for (let i = startDow - 1; i >= 0; i--) {
-    cells.push({ day: daysInPrev - i, month: 'prev', date: null });
-  }
-  // Jours du mois courant
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dateStr = `${viewYear}-${padZ(viewMonth+1)}-${padZ(d)}`;
-    const dt = new Date(viewYear, viewMonth, d);
-    const dow = dt.getDay(); // 0=dim,6=sam
-    cells.push({ day: d, month: 'cur', dateStr, dt, weekend: dow === 0 || dow === 6 });
-  }
-  // Compléter pour avoir 6 lignes × 7
-  const rem = 42 - cells.length;
-  for (let i = 1; i <= rem; i++) {
-    cells.push({ day: i, month: 'next', date: null });
-  }
-
-  const selectedData = selDay && history ? history[selDay] : null;
-
-  // Stats du mois
-  const monthStats = useMemo(() => {
-    if (!history) return { presents:0, absents:0, retards:0, totalSec:0 };
-    let presents=0, absents=0, retards=0, totalSec=0;
-    for (let d=1; d<=daysInMonth; d++) {
-      const k = `${viewYear}-${padZ(viewMonth+1)}-${padZ(d)}`;
-      const h = history[k];
-      if (!h) continue;
-      if (h.statut === 'absent') absents++;
-      else { presents++; if (h.retard_min>0) retards++; totalSec += (h.temps_effectif_sec||0); }
-    }
-    return { presents, absents, retards, totalSec };
-  }, [history, viewYear, viewMonth, daysInMonth]);
-
-  return (
-    <div>
-      {/* Stats mois */}
-      <div className="monthly-metrics" style={{marginBottom:16}}>
-        <div className="metric-card green">
-          <div className="metric-label">Jours présents</div>
-          <div className="metric-value green">{monthStats.presents}</div>
-        </div>
-        <div className="metric-card red">
-          <div className="metric-label">Jours absents</div>
-          <div className="metric-value red">{monthStats.absents}</div>
-        </div>
-        <div className="metric-card amber">
-          <div className="metric-label">Retards</div>
-          <div className="metric-value amber">{monthStats.retards}</div>
-        </div>
-        <div className="metric-card blue">
-          <div className="metric-label">Total heures</div>
-          <div className="metric-value blue">{fmtHM(monthStats.totalSec)}</div>
-        </div>
-      </div>
-
-      <div className="calendar-wrap">
-        {/* Navigation */}
-        <div className="calendar-nav">
-          <button className="cal-nav-btn" onClick={prevMonth}>‹</button>
-          <div className="calendar-nav-title">
-            {MONTHS_FR[viewMonth]} {viewYear}
-          </div>
-          <button className="cal-nav-btn" onClick={nextMonth}>›</button>
-        </div>
-
-        {/* Légende */}
-        <div className="legend-row">
-          <div className="legend-item"><div className="legend-dot" style={{background:'var(--green)'}}></div>Présent</div>
-          <div className="legend-item"><div className="legend-dot" style={{background:'var(--blue)'}}></div>Off Work enregistré</div>
-          <div className="legend-item"><div className="legend-dot" style={{background:'var(--red)'}}></div>Absent</div>
-          <div className="legend-item"><div className="legend-dot" style={{background:'var(--amber)'}}></div>Retard / Dépassement</div>
-        </div>
-
-        {/* Grille */}
-        <div className="calendar-grid">
-          {DAYS_FR.map(d => (
-            <div key={d} className="cal-day-header">{d}</div>
-          ))}
-          {cells.map((cell, idx) => {
-            if (cell.month !== 'cur') {
-              return <div key={idx} className="cal-day empty other-month"><span className="cal-day-num" style={{color:'var(--text3)'}}>{cell.day}</span></div>;
-            }
-            const isToday = cell.dt && cell.dt.toDateString() === today.toDateString();
-            const isFuture = cell.dt && cell.dt > today;
-            const h = history && history[cell.dateStr];
-            let dayClass = "cal-day";
-            let dotClass = null;
-            if (cell.weekend) dayClass += " day-weekend";
-            else if (isFuture) { /* future */ }
-            else if (h) {
-              if (h.statut === 'absent') { dayClass += " day-absent"; dotClass = "dot-absent-c"; }
-              else if (h.statut === 'offwork') { dayClass += " day-offwork"; dotClass = "dot-offwork-c"; }
-              else { dayClass += " day-present"; dotClass = "dot-present-c"; }
-              // Overlay amber si retard ou dépassement
-              if (h.retard_min > 0 || h.depassements_sec > 0) dotClass = "dot-offwork-c";
-            }
-            if (isToday) dayClass += " today";
-            if (selDay === cell.dateStr) dayClass += " selected";
-
-            return (
-              <div
-                key={idx}
-                className={dayClass}
-                onClick={() => !cell.weekend && !isFuture && setSelDay(selDay === cell.dateStr ? null : cell.dateStr)}
-              >
-                <span className="cal-day-num">{cell.day}</span>
-                {dotClass && !isFuture && !cell.weekend && (
-                  <div className={`cal-day-dot ${dotClass}`}></div>
-                )}
-                {isFuture && !cell.weekend && (
-                  <div className="cal-day-dot" style={{background:'rgba(255,255,255,0.1)'}}></div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Détail jour sélectionné */}
-        {selDay && (
-          <div className="cal-detail">
-            <div className="cal-detail-date">
-              <span style={{fontSize:18}}>{selectedData ? (selectedData.statut === 'absent' ? '❌' : selectedData.retard_min > 0 || selectedData.depassements_sec > 0 ? '⚠️' : '✅') : '📅'}</span>
-              {new Date(selDay + 'T12:00:00').toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' })}
-            </div>
-            {!selectedData ? (
-              <div style={{color:'var(--text3)',fontSize:13}}>Aucune donnée enregistrée pour cette journée.</div>
-            ) : selectedData.statut === 'absent' ? (
-              <div style={{color:'var(--red)',fontSize:13,padding:'8px 0'}}>⛔ Employé absent ce jour-là.</div>
-            ) : (
-              <div>
-                <div className="cal-detail-grid">
-                  <div className="cal-detail-stat">
-                    <div className="cal-detail-stat-label">Arrivée</div>
-                    <div className="cal-detail-stat-val" style={{color:'var(--green)',fontFamily:'monospace'}}>{selectedData.heure_arrivee || '--:--'}</div>
-                  </div>
-                  <div className="cal-detail-stat">
-                    <div className="cal-detail-stat-label">Départ</div>
-                    <div className="cal-detail-stat-val" style={{color:'var(--blue)',fontFamily:'monospace'}}>{selectedData.heure_depart || '--:--'}</div>
-                  </div>
-                  <div className="cal-detail-stat">
-                    <div className="cal-detail-stat-label">Retard</div>
-                    <div className="cal-detail-stat-val" style={{color: selectedData.retard_min > 0 ? 'var(--red)' : 'var(--green)'}}>
-                      {selectedData.retard_min > 0 ? `+${selectedData.retard_min} min` : 'Aucun'}
-                    </div>
-                  </div>
-                  <div className="cal-detail-stat">
-                    <div className="cal-detail-stat-label">Dépassements</div>
-                    <div className="cal-detail-stat-val" style={{color: selectedData.depassements_sec > 0 ? 'var(--amber)' : 'var(--green)'}}>
-                      {selectedData.depassements_sec > 0 ? fmtSec(selectedData.depassements_sec) : 'Aucun'}
-                    </div>
-                  </div>
-                  <div className="cal-detail-stat">
-                    <div className="cal-detail-stat-label">Travail effectif</div>
-                    <div className="cal-detail-stat-val" style={{color:'var(--blue)'}}>{fmtHM(selectedData.temps_effectif_sec)}</div>
-                  </div>
-                  <div className="cal-detail-stat">
-                    <div className="cal-detail-stat-label">Statut</div>
-                    <div className="cal-detail-stat-val" style={{fontSize:13}}>
-                      {selectedData.statut === 'offwork' ? <span style={{color:'var(--blue)'}}>✔ Off Work enregistré</span>
-                       : <span style={{color:'var(--green)'}}>● Présent</span>}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ===================== DAILY VIEW =====================
 function DailyView({ emp, colorIdx }) {
   const ac = avatarColor(colorIdx);
-  const retardStr   = emp.retard_min > 0 ? `+${emp.retard_min} min` : "Aucun";
-  const anticipeStr = emp.depart_anticipe_min > 0 ? `-${emp.depart_anticipe_min} min` : "Aucun";
-  const depassStr   = emp.depassements_sec > 0 ? fmtSec(emp.depassements_sec) : "Aucun";
+  const retardStr     = emp.retard_min > 0 ? `+${emp.retard_min} min` : "Aucun";
+  const anticipeStr   = emp.depart_anticipe_min > 0 ? `-${emp.depart_anticipe_min} min` : "Aucun";
+  const depassStr     = emp.depassements_sec > 0 ? fmtSec(emp.depassements_sec) : "Aucun";
 
   return (
     <div>
+      {/* Profile */}
       <div className="profile-header">
         <div className="profile-left">
           <div className="profile-avatar" style={{ background: ac.bg, color: ac.color }}>
@@ -1080,7 +653,7 @@ function DailyView({ emp, colorIdx }) {
           </div>
           <div>
             <div className="profile-name">{emp.nom}</div>
-            <div className="profile-uid">ID: {emp.user_id}{emp.username !== "N/A" ? ` · @${emp.username}` : ""}</div>
+            <div className="profile-uid">ID: {emp.user_id} {emp.username !== "N/A" ? `· @${emp.username}` : ""}</div>
           </div>
         </div>
         <div className="profile-right">
@@ -1089,8 +662,10 @@ function DailyView({ emp, colorIdx }) {
         </div>
       </div>
 
+      {/* Active break banner */}
       {emp.pause_courante && <BreakBanner pause_courante={emp.pause_courante} />}
 
+      {/* Key metrics */}
       <div className="metrics-grid">
         <div className="metric-card green">
           <div className="metric-label">Temps de travail</div>
@@ -1111,12 +686,13 @@ function DailyView({ emp, colorIdx }) {
           <div className={`metric-value ${emp.depassements_sec > 0 ? 'amber' : 'green'}`}>{depassStr}</div>
         </div>
         <div className="metric-card purple">
-          <div className="metric-label">Total pauses</div>
-          <div className="metric-value purple">{fmtHM(emp.pauses_total_sec)}</div>
-          <div className="metric-sub">sur la journée</div>
+          <div className="metric-label">Tps travail total</div>
+          <div className="metric-value purple">{fmtHM(emp.temps_effectif_sec)}</div>
+          <div className="metric-sub">net (sans pauses)</div>
         </div>
       </div>
 
+      {/* Horaires + Pauses */}
       <div className="two-col">
         <div className="info-card">
           <div className="info-card-title">Horaires</div>
@@ -1145,7 +721,7 @@ function DailyView({ emp, colorIdx }) {
             <span className={`info-row-val ${emp.depassements_sec > 0 ? 'val-red' : 'val-green'}`}>{depassStr}</span>
           </div>
           <div className="info-row">
-            <span className="info-row-label"><span className="info-row-icon">💼</span>Travail net</span>
+            <span className="info-row-label"><span className="info-row-icon">💼</span>Travail total</span>
             <span className="info-row-val val-green">{fmtHM(emp.temps_effectif_sec)}</span>
           </div>
         </div>
@@ -1154,22 +730,22 @@ function DailyView({ emp, colorIdx }) {
           <div className="info-card-title">Pauses</div>
           <div className="pause-grid">
             <div className="pause-item">
-              <div className="pause-item-header"><span>🍽</span>Repas</div>
+              <div className="pause-item-header"><span className="pause-item-emoji">🍽</span>Repas</div>
               <div className="pause-count">{emp.pause_repas.count}<span style={{fontSize:12,fontWeight:400,color:'var(--text3)'}}>×</span></div>
               <div className="pause-dur">{fmtSec(emp.pause_repas.duree_sec)} total</div>
             </div>
             <div className="pause-item">
-              <div className="pause-item-header"><span>🚻</span>Courtes</div>
+              <div className="pause-item-header"><span className="pause-item-emoji">🚻</span>Courtes</div>
               <div className="pause-count">{emp.pauses_courtes.count}<span style={{fontSize:12,fontWeight:400,color:'var(--text3)'}}>×</span></div>
               <div className="pause-dur">{fmtSec(emp.pauses_courtes.duree_sec)} total</div>
             </div>
             <div className="pause-item">
-              <div className="pause-item-header"><span>🚽</span>Longues</div>
+              <div className="pause-item-header"><span className="pause-item-emoji">🚽</span>Longues</div>
               <div className="pause-count">{emp.pauses_longues.count}<span style={{fontSize:12,fontWeight:400,color:'var(--text3)'}}>×</span></div>
               <div className="pause-dur">{fmtSec(emp.pauses_longues.duree_sec)} total</div>
             </div>
             <div className="pause-item">
-              <div className="pause-item-header"><span>🚬</span>Cigarette</div>
+              <div className="pause-item-header"><span className="pause-item-emoji">🚬</span>Cigarette</div>
               <div className="pause-count">{emp.pauses_cigarette.count}<span style={{fontSize:12,fontWeight:400,color:'var(--text3)'}}>×</span></div>
               <div className="pause-dur">{fmtSec(emp.pauses_cigarette.duree_sec)} total</div>
             </div>
@@ -1185,12 +761,15 @@ function DailyView({ emp, colorIdx }) {
         </div>
       </div>
 
+      {/* Sessions */}
       {emp.sessions && emp.sessions.length > 0 && (
         <div className="info-card">
           <div className="info-card-title">Historique des pauses</div>
           <table className="sessions-table">
             <thead>
-              <tr><th>Type</th><th>Début</th><th>Fin</th><th>Durée</th><th>Statut</th></tr>
+              <tr>
+                <th>Type</th><th>Début</th><th>Fin</th><th>Durée</th><th>Statut</th>
+              </tr>
             </thead>
             <tbody>
               {emp.sessions.map((s, i) => {
@@ -1216,6 +795,45 @@ function DailyView({ emp, colorIdx }) {
   );
 }
 
+// ===================== UTILS CALENDAR =====================
+function padZ(n) { return String(n).padStart(2,'0'); }
+const MONTHS_FR = ["Janvier","Février","Mars","Avril","Mai","Juin",
+                   "Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+const DAYS_FR = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
+
+// ===================== DEMO HISTORY (par employé) =====================
+function makeDemoHistory(userId) {
+  const today = new Date();
+  const year  = today.getFullYear();
+  const month = today.getMonth();
+  const days  = new Date(year, month+1, 0).getDate();
+  const history = {};
+  for (let d = 1; d <= days; d++) {
+    const dt = new Date(year, month, d);
+    if (dt > today) break;
+    const dow = dt.getDay();
+    if (dow === 0 || dow === 6) continue;
+    const seed = (userId * 13 + d * 7) % 100;
+    const absent = seed < 12;
+    if (absent) {
+      history[`${year}-${padZ(month+1)}-${padZ(d)}`] = { statut: "absent" };
+    } else {
+      const retardMin = seed < 25 ? Math.floor((seed % 5) * 3 + 1) : 0;
+      const depassSec = seed > 70 ? (seed % 3 + 1) * 120 : 0;
+      const offWorkDone = dt.getDate() < today.getDate() || (dt.getDate() === today.getDate() && today.getHours() >= 18);
+      history[`${year}-${padZ(month+1)}-${padZ(d)}`] = {
+        statut:            offWorkDone ? "offwork" : "present",
+        heure_arrivee:     retardMin > 0 ? `07:${padZ(40+retardMin)}` : "07:38",
+        heure_depart:      offWorkDone ? "18:27" : "--:--",
+        retard_min:        retardMin,
+        depassements_sec:  depassSec,
+        temps_effectif_sec: Math.max(0, 38700 - depassSec - retardMin * 60),
+      };
+    }
+  }
+  return history;
+}
+
 // ===================== MONTHLY CHART =====================
 function MonthlyChart({ data }) {
   const ref = useRef(null);
@@ -1235,7 +853,7 @@ function MonthlyChart({ data }) {
         plugins: { legend:{display:false}, tooltip:{callbacks:{label:c=>`${c.raw}h`}} },
         scales: {
           x: { grid:{display:false}, ticks:{color:"#555b6e",font:{size:10}} },
-          y: { min:0,max:12, ticks:{color:"#555b6e",font:{size:10},callback:v=>`${v}h`}, grid:{color:"rgba(255,255,255,0.04)"} }
+          y: { min:0, max:12, ticks:{color:"#555b6e",font:{size:10},callback:v=>`${v}h`}, grid:{color:"rgba(255,255,255,0.04)"} }
         }
       }
     });
@@ -1244,11 +862,198 @@ function MonthlyChart({ data }) {
   return <canvas ref={ref} aria-label="Graphique des heures de travail journalières" />;
 }
 
+// ===================== OFF WORK SUMMARY PANEL =====================
+function OffWorkPanel({ employes, colorMap }) {
+  const today = new Date().toLocaleDateString('fr-FR', { day:'2-digit', month:'long', year:'numeric' });
+  const done   = employes.filter(e => e.heure_depart && e.heure_depart !== "--:--");
+  const active = employes.filter(e => !e.heure_depart || e.heure_depart === "--:--");
+  const conformes   = done.filter(e => e.retard_min === 0 && e.depassements_sec === 0);
+  const infractions = done.filter(e => e.retard_min > 0 || e.depassements_sec > 0);
+  const activesAlert = active.filter(e => e.retard_min > 0 || e.depassements_sec > 0);
+  const allOk    = conformes;
+  const allAlert = [...infractions, ...activesAlert];
+  return (
+    <div className="offwork-panel">
+      <div className="offwork-panel-header">
+        <span style={{fontSize:16}}>📋</span>
+        <span className="offwork-panel-title">Résultats de la journée</span>
+        <span className="offwork-panel-date">{today}</span>
+      </div>
+      <div className="offwork-cols">
+        <div className="offwork-col">
+          <div className="offwork-col-title col-ok"><span>✅</span> Conformes ({allOk.length})</div>
+          {allOk.length === 0 && <div className="offwork-empty">Aucun employé conforme pour l'instant.</div>}
+          {allOk.map((e) => {
+            const ac = colorMap[e.user_id] || avatarColor(0);
+            return (
+              <div key={e.user_id} className="offwork-emp-row ok-row">
+                <div className="offwork-emp-avatar" style={{background:ac.bg,color:ac.color}}>{initials(e.nom)}</div>
+                <div style={{flex:1,minWidth:0}}>
+                  <div className="offwork-emp-name">{e.nom}</div>
+                  <div className="offwork-emp-meta">
+                    {e.heure_arrivee !== "--:--" ? `Arrivée ${e.heure_arrivee}` : ""}
+                    {e.heure_depart && e.heure_depart !== "--:--" ? ` · Départ ${e.heure_depart}` : ""}
+                  </div>
+                </div>
+                <span className="offwork-emp-badge badge-ok">OK ✓</span>
+              </div>
+            );
+          })}
+        </div>
+        <div className="offwork-col">
+          <div className="offwork-col-title col-alert"><span>⚠️</span> Infractions ({allAlert.length})</div>
+          {allAlert.length === 0 && <div className="offwork-empty">Aucune infraction détectée.</div>}
+          {allAlert.map((e) => {
+            const ac = colorMap[e.user_id] || avatarColor(0);
+            const tags = [];
+            if (e.retard_min > 0) tags.push(`Retard +${e.retard_min}min`);
+            if (e.depassements_sec > 0) tags.push(`Dépassement ${fmtSec(e.depassements_sec)}`);
+            return (
+              <div key={e.user_id} className="offwork-emp-row alert-row">
+                <div className="offwork-emp-avatar" style={{background:ac.bg,color:ac.color}}>{initials(e.nom)}</div>
+                <div style={{flex:1,minWidth:0}}>
+                  <div className="offwork-emp-name">{e.nom}</div>
+                  <div className="offwork-emp-meta" style={{color:'var(--red)'}}>{tags.join(' · ')}</div>
+                </div>
+                <span className="offwork-emp-badge badge-alert">⚠ Alerte</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ===================== CALENDAR =====================
+function CalendarView({ emp, colorIdx, history }) {
+  const today   = new Date();
+  const [viewYear,  setViewYear]  = useState(today.getFullYear());
+  const [viewMonth, setViewMonth] = useState(today.getMonth());
+  const [selDay,    setSelDay]    = useState(null);
+
+  function prevMonth() {
+    if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y-1); }
+    else setViewMonth(m => m-1);
+    setSelDay(null);
+  }
+  function nextMonth() {
+    if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y+1); }
+    else setViewMonth(m => m+1);
+    setSelDay(null);
+  }
+
+  const firstDay = new Date(viewYear, viewMonth, 1);
+  let startDow = firstDay.getDay() - 1;
+  if (startDow < 0) startDow = 6;
+  const daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
+  const daysInPrev  = new Date(viewYear, viewMonth,   0).getDate();
+
+  const cells = [];
+  for (let i = startDow - 1; i >= 0; i--) cells.push({ day: daysInPrev - i, month: 'prev' });
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${viewYear}-${padZ(viewMonth+1)}-${padZ(d)}`;
+    const dt = new Date(viewYear, viewMonth, d);
+    const dow = dt.getDay();
+    cells.push({ day: d, month: 'cur', dateStr, dt, weekend: dow === 0 || dow === 6 });
+  }
+  const rem = 42 - cells.length;
+  for (let i = 1; i <= rem; i++) cells.push({ day: i, month: 'next' });
+
+  const selectedData = selDay && history ? history[selDay] : null;
+
+  const monthStats = useMemo(() => {
+    if (!history) return { presents:0, absents:0, retards:0, totalSec:0 };
+    let presents=0, absents=0, retards=0, totalSec=0;
+    for (let d=1; d<=daysInMonth; d++) {
+      const k = `${viewYear}-${padZ(viewMonth+1)}-${padZ(d)}`;
+      const h = history[k];
+      if (!h) continue;
+      if (h.statut === 'absent') absents++;
+      else { presents++; if (h.retard_min>0) retards++; totalSec += (h.temps_effectif_sec||0); }
+    }
+    return { presents, absents, retards, totalSec };
+  }, [history, viewYear, viewMonth, daysInMonth]);
+
+  return (
+    <div>
+      <div className="monthly-metrics" style={{marginBottom:16}}>
+        <div className="metric-card green"><div className="metric-label">Jours présents</div><div className="metric-value green">{monthStats.presents}</div></div>
+        <div className="metric-card red"><div className="metric-label">Jours absents</div><div className="metric-value red">{monthStats.absents}</div></div>
+        <div className="metric-card amber"><div className="metric-label">Retards</div><div className="metric-value amber">{monthStats.retards}</div></div>
+        <div className="metric-card blue"><div className="metric-label">Total heures</div><div className="metric-value blue">{fmtHM(monthStats.totalSec)}</div></div>
+      </div>
+      <div className="calendar-wrap">
+        <div className="calendar-nav">
+          <button className="cal-nav-btn" onClick={prevMonth}>‹</button>
+          <div className="calendar-nav-title">{MONTHS_FR[viewMonth]} {viewYear}</div>
+          <button className="cal-nav-btn" onClick={nextMonth}>›</button>
+        </div>
+        <div className="legend-row">
+          <div className="legend-item"><div className="legend-dot" style={{background:'var(--green)'}}></div>Présent</div>
+          <div className="legend-item"><div className="legend-dot" style={{background:'var(--blue)'}}></div>Off Work</div>
+          <div className="legend-item"><div className="legend-dot" style={{background:'var(--red)'}}></div>Absent</div>
+          <div className="legend-item"><div className="legend-dot" style={{background:'var(--amber)'}}></div>Retard/Dépassement</div>
+        </div>
+        <div className="calendar-grid">
+          {DAYS_FR.map(d => <div key={d} className="cal-day-header">{d}</div>)}
+          {cells.map((cell, idx) => {
+            if (cell.month !== 'cur') {
+              return <div key={idx} className="cal-day empty other-month"><span className="cal-day-num" style={{color:'var(--text3)'}}>{cell.day}</span></div>;
+            }
+            const isToday  = cell.dt && cell.dt.toDateString() === today.toDateString();
+            const isFuture = cell.dt && cell.dt > today;
+            const h = history && history[cell.dateStr];
+            let dayClass = "cal-day";
+            let dotClass = null;
+            if (cell.weekend) dayClass += " day-weekend";
+            else if (!isFuture && h) {
+              if (h.statut === 'absent')  { dayClass += " day-absent";  dotClass = "dot-absent-c"; }
+              else if (h.statut === 'offwork') { dayClass += " day-offwork"; dotClass = "dot-offwork-c"; }
+              else { dayClass += " day-present"; dotClass = "dot-present-c"; }
+              if (h.retard_min > 0 || h.depassements_sec > 0) dotClass = "dot-offwork-c";
+            }
+            if (isToday) dayClass += " today";
+            if (selDay === cell.dateStr) dayClass += " selected";
+            return (
+              <div key={idx} className={dayClass}
+                onClick={() => !cell.weekend && !isFuture && setSelDay(selDay === cell.dateStr ? null : cell.dateStr)}>
+                <span className="cal-day-num">{cell.day}</span>
+                {dotClass && !isFuture && !cell.weekend && <div className={`cal-day-dot ${dotClass}`}></div>}
+              </div>
+            );
+          })}
+        </div>
+        {selDay && (
+          <div className="cal-detail">
+            <div className="cal-detail-date">
+              <span style={{fontSize:18}}>{selectedData ? (selectedData.statut==='absent' ? '❌' : selectedData.retard_min>0||selectedData.depassements_sec>0 ? '⚠️' : '✅') : '📅'}</span>
+              {new Date(selDay+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
+            </div>
+            {!selectedData ? (
+              <div style={{color:'var(--text3)',fontSize:13}}>Aucune donnée pour cette journée.</div>
+            ) : selectedData.statut === 'absent' ? (
+              <div style={{color:'var(--red)',fontSize:13}}>⛔ Employé absent ce jour-là.</div>
+            ) : (
+              <div className="cal-detail-grid">
+                <div className="cal-detail-stat"><div className="cal-detail-stat-label">Arrivée</div><div className="cal-detail-stat-val" style={{color:'var(--green)',fontFamily:'monospace'}}>{selectedData.heure_arrivee||'--:--'}</div></div>
+                <div className="cal-detail-stat"><div className="cal-detail-stat-label">Départ</div><div className="cal-detail-stat-val" style={{color:'var(--blue)',fontFamily:'monospace'}}>{selectedData.heure_depart||'--:--'}</div></div>
+                <div className="cal-detail-stat"><div className="cal-detail-stat-label">Retard</div><div className="cal-detail-stat-val" style={{color:selectedData.retard_min>0?'var(--red)':'var(--green)'}}>{selectedData.retard_min>0?`+${selectedData.retard_min} min`:'Aucun'}</div></div>
+                <div className="cal-detail-stat"><div className="cal-detail-stat-label">Dépassements</div><div className="cal-detail-stat-val" style={{color:selectedData.depassements_sec>0?'var(--amber)':'var(--green)'}}>{selectedData.depassements_sec>0?fmtSec(selectedData.depassements_sec):'Aucun'}</div></div>
+                <div className="cal-detail-stat"><div className="cal-detail-stat-label">Travail effectif</div><div className="cal-detail-stat-val" style={{color:'var(--blue)'}}>{fmtHM(selectedData.temps_effectif_sec)}</div></div>
+                <div className="cal-detail-stat"><div className="cal-detail-stat-label">Statut</div><div className="cal-detail-stat-val" style={{fontSize:13}}>{selectedData.statut==='offwork'?<span style={{color:'var(--blue)'}}>✔ Off Work</span>:<span style={{color:'var(--green)'}}>● Présent</span>}</div></div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ===================== EMPLOYEE MONTHLY VIEW =====================
 function EmployeeMonthlyView({ emp, colorIdx, history }) {
   const [subTab, setSubTab] = useState("calendar");
-
-  // Transformer history en rows pour table/chart
   const today = new Date();
   const viewYear  = today.getFullYear();
   const viewMonth = today.getMonth();
@@ -1265,12 +1070,12 @@ function EmployeeMonthlyView({ emp, colorIdx, history }) {
       const h = history && history[k];
       r.push({
         date:   `${padZ(d)}/${padZ(viewMonth+1)}`,
-        arrivee: h ? (h.heure_arrivee || '--:--') : '--:--',
-        depart:  h ? (h.heure_depart  || '--:--') : '--:--',
+        arrivee: h ? (h.heure_arrivee||'--:--') : '--:--',
+        depart:  h ? (h.heure_depart||'--:--')  : '--:--',
         travail: h && h.temps_effectif_sec ? fmtHM(h.temps_effectif_sec) : '--',
         heures:  h && h.temps_effectif_sec ? Math.round(h.temps_effectif_sec/360)/10 : 0,
-        retard:  h ? (h.retard_min || 0) : 0,
-        depass:  h ? (h.depassements_sec || 0) : 0,
+        retard:  h ? (h.retard_min||0) : 0,
+        depass:  h ? (h.depassements_sec||0) : 0,
         statut:  h ? h.statut : 'absent',
       });
     }
@@ -1284,24 +1089,17 @@ function EmployeeMonthlyView({ emp, colorIdx, history }) {
         <button className={`sub-tab-btn ${subTab==='chart'?'active':''}`}    onClick={()=>setSubTab('chart')}>📊 Graphique</button>
         <button className={`sub-tab-btn ${subTab==='table'?'active':''}`}    onClick={()=>setSubTab('table')}>📋 Tableau</button>
       </div>
-
-      {subTab === 'calendar' && (
-        <CalendarView emp={emp} colorIdx={colorIdx} history={history} />
-      )}
-
+      {subTab === 'calendar' && <CalendarView emp={emp} colorIdx={colorIdx} history={history} />}
       {subTab === 'chart' && (
-        <div>
-          <div className="chart-card">
-            <div className="chart-card-title">Heures travaillées — {MONTHS_FR[viewMonth]} {viewYear}</div>
-            <div style={{display:"flex",gap:14,marginBottom:10,fontSize:11,color:"var(--text3)"}}>
-              <span><span style={{display:"inline-block",width:10,height:10,borderRadius:2,background:"rgba(34,211,122,0.65)",marginRight:4}}></span>Présent</span>
-              <span><span style={{display:"inline-block",width:10,height:10,borderRadius:2,background:"rgba(240,78,94,0.35)",marginRight:4}}></span>Absent</span>
-            </div>
-            <div className="chart-wrap"><MonthlyChart data={rows} /></div>
+        <div className="chart-card">
+          <div className="chart-card-title">Heures travaillées — {MONTHS_FR[viewMonth]} {viewYear}</div>
+          <div style={{display:"flex",gap:14,marginBottom:10,fontSize:11,color:"var(--text3)"}}>
+            <span><span style={{display:"inline-block",width:10,height:10,borderRadius:2,background:"rgba(34,211,122,0.65)",marginRight:4}}></span>Présent</span>
+            <span><span style={{display:"inline-block",width:10,height:10,borderRadius:2,background:"rgba(240,78,94,0.35)",marginRight:4}}></span>Absent</span>
           </div>
+          <div className="chart-wrap"><MonthlyChart data={rows} /></div>
         </div>
       )}
-
       {subTab === 'table' && (
         <div className="monthly-table-wrap">
           <div className="monthly-table-header">
@@ -1310,10 +1108,7 @@ function EmployeeMonthlyView({ emp, colorIdx, history }) {
           </div>
           <table className="monthly-table">
             <thead>
-              <tr>
-                <th>Date</th><th>Arrivée</th><th>Départ</th>
-                <th>Durée</th><th>Retard</th><th>Dépassements</th><th>Statut</th>
-              </tr>
+              <tr><th>Date</th><th>Arrivée</th><th>Départ</th><th>Durée</th><th>Retard</th><th>Dépassements</th><th>Statut</th></tr>
             </thead>
             <tbody>
               {rows.map((r,i) => (
@@ -1325,8 +1120,8 @@ function EmployeeMonthlyView({ emp, colorIdx, history }) {
                   <td>{r.retard > 0 ? <span className="exceeded-pill">+{r.retard}min</span> : <span className="ok-pill">—</span>}</td>
                   <td>{r.depass > 0 ? <span className="exceeded-pill">+{fmtSec(r.depass)}</span> : <span className="ok-pill">—</span>}</td>
                   <td>
-                    {r.statut === 'offwork'  ? <span className="ok-pill" style={{background:'var(--blue-bg)',borderColor:'var(--blue-b)',color:'var(--blue)'}}>Off Work</span>
-                     : r.statut !== 'absent' ? <span className="ok-pill">Présent</span>
+                    {r.statut==='offwork' ? <span className="ok-pill" style={{background:'var(--blue-bg)',borderColor:'var(--blue-b)',color:'var(--blue)'}}>Off Work</span>
+                     : r.statut!=='absent' ? <span className="ok-pill">Présent</span>
                      : <span className="exceeded-pill">Absent</span>}
                   </td>
                 </tr>
@@ -1343,16 +1138,15 @@ function EmployeeMonthlyView({ emp, colorIdx, history }) {
 const DEFAULT_API = (typeof window !== "undefined" ? window.location.origin : "") + "/api/stats";
 
 function App() {
-  const [tab,      setTab]      = useState("daily");
-  const [apiUrl,   setApiUrl]   = useState(DEFAULT_API);
-  const [inputUrl, setInputUrl] = useState(DEFAULT_API);
-  const [data,     setData]     = useState(makeDemoData());
-  const [loading,  setLoading]  = useState(false);
-  const [error,    setError]    = useState(null);
-  const [isDemo,   setIsDemo]   = useState(true);
-  const [selIdx,   setSelIdx]   = useState(0);
-  // History par employé (en mémoire, simulée en démo)
-  const [histories, setHistories] = useState({});
+  const [tab,       setTab]       = useState("daily");
+  const [apiUrl,    setApiUrl]    = useState(DEFAULT_API);
+  const [inputUrl,  setInputUrl]  = useState(DEFAULT_API);
+  const [data,      setData]      = useState(null);       // null = pas encore chargé
+  const [loading,   setLoading]   = useState(true);
+  const [error,     setError]     = useState(null);
+  const [isDemo,    setIsDemo]    = useState(false);
+  const [selIdx,    setSelIdx]    = useState(0);
+  const apiEverOk  = React.useRef(false);                 // API a répondu au moins 1 fois
 
   const employes = data?.employes || [];
   const selected = employes[selIdx] || employes[0];
@@ -1364,24 +1158,8 @@ function App() {
     return m;
   }, [employes]);
 
-  const fetchData = useCallback(async (url) => {
-    setLoading(true); setError(null);
-    try {
-      const res = await fetch(url, { cache: "no-store" });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json = await res.json();
-      setData(json);
-      setIsDemo(false);
-    } catch (e) {
-      setError(`Impossible de joindre l'API : ${e.message}. Mode démonstration.`);
-      setData(makeDemoData());
-      setIsDemo(true);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  // Génère les historiques de démo si besoin
+  // Historiques mensuels (simulés en démo, vides en live — à brancher sur une vraie API mensuelle)
+  const [histories, setHistories] = useState({});
   useEffect(() => {
     if (isDemo && employes.length > 0) {
       const h = {};
@@ -1390,13 +1168,51 @@ function App() {
     }
   }, [isDemo, data]);
 
-  useEffect(() => { fetchData(apiUrl); }, []);
+  const fetchData = useCallback(async (url) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const controller = new AbortController();
+      const tid = setTimeout(() => controller.abort(), 9000);
+      const res = await fetch(url, { cache: "no-store", signal: controller.signal });
+      clearTimeout(tid);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      // API OK → mode live, même si liste vide (bot vient de démarrer)
+      apiEverOk.current = true;
+      setData(json);
+      setIsDemo(false);
+    } catch (e) {
+      const reason = e.name === "AbortError"
+        ? "délai dépassé — vérifiez que le bot Render est actif"
+        : e.message;
+      setError(`API inaccessible : ${reason}`);
+      // Bascule en démo uniquement si on n'a jamais eu de données réelles
+      if (!apiEverOk.current) {
+        setData(makeDemoData());
+        setIsDemo(true);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Auto-fetch au chargement initial
+  useEffect(() => {
+    fetchData(apiUrl);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Auto-refresh toutes les 15 secondes
   useEffect(() => {
     const id = setInterval(() => fetchData(apiUrl), 15000);
     return () => clearInterval(id);
   }, [apiUrl, fetchData]);
 
-  const handleApply = () => { setApiUrl(inputUrl); fetchData(inputUrl); };
+  const handleApply = () => {
+    setApiUrl(inputUrl);
+    fetchData(inputUrl);
+  };
 
   return (
     <div>
@@ -1404,7 +1220,7 @@ function App() {
       <div className="topbar">
         <div className="logo">
           <div className="logo-icon">⏱</div>
-          BOT-MANEMAN
+          UptimeRobot Attendance
         </div>
         <div className="topbar-center">
           <div className="tab-pill">
@@ -1419,17 +1235,14 @@ function App() {
             {isDemo ? "Démo" : "En direct"}
           </div>
           <button
-            className="refresh-btn"
+            className={`refresh-btn ${loading ? "spin" : ""}`}
             onClick={() => fetchData(apiUrl)}
             title="Rafraîchir"
           >
-            {loading
-              ? <span className="spin-icon">↻</span>
-              : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M23 4v6h-6M1 20v-6h6"/>
-                  <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
-                </svg>
-            }
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M23 4v6h-6M1 20v-6h6"/>
+              <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+            </svg>
           </button>
         </div>
       </div>
@@ -1437,9 +1250,10 @@ function App() {
       <div className="app-shell">
         {/* SIDEBAR */}
         <div className="sidebar">
+          {/* API config */}
           <div style={{padding:"0 4px 12px"}}>
             <div className="section-title">URL de l'API bot</div>
-            <div className="config-bar">
+            <div className="config-bar" style={{flexDirection:"column",alignItems:"stretch",gap:6}}>
               <input
                 value={inputUrl}
                 onChange={e => setInputUrl(e.target.value)}
@@ -1450,7 +1264,7 @@ function App() {
             </div>
             {isDemo && (
               <div style={{fontSize:10,color:"var(--text3)",marginTop:6,padding:"0 2px"}}>
-                Mode démonstration — configurez l'URL ci-dessus
+                Mode démonstration — configurez l'URL de votre bot ci-dessus
               </div>
             )}
           </div>
@@ -1479,11 +1293,33 @@ function App() {
 
         {/* MAIN */}
         <div className="main-content">
-          {error && <div className="error-banner">⚠ {error}</div>}
+          {/* Bannière erreur */}
+          {error && (
+            <div className="error-banner">⚠ {error}</div>
+          )}
+
+          {/* Chargement initial (data === null) */}
+          {data === null && loading && (
+            <div className="empty-state">
+              <div className="empty-icon" style={{animation:"spin 1s linear infinite",display:"inline-block"}}>↻</div>
+              <div className="empty-text">Connexion à l'API du bot…</div>
+            </div>
+          )}
+
+          {/* API connectée mais aucun employé n'a encore pointé */}
+          {data !== null && !isDemo && employes.length === 0 && (
+            <div className="empty-state">
+              <div className="empty-icon">🟢</div>
+              <div className="empty-text" style={{textAlign:'center'}}>
+                Bot connecté — en attente des pointages.<br/>
+                <span style={{fontSize:12,color:'var(--text3)'}}>Les employés apparaîtront ici dès qu'ils appuieront sur 🟢 Start Work.</span>
+              </div>
+            </div>
+          )}
 
           {/* QUOTIDIEN */}
           {tab === "daily" && selected && <DailyView emp={selected} colorIdx={selIdx} />}
-          {tab === "daily" && !selected && (
+          {tab === "daily" && !selected && data !== null && employes.length === 0 && !loading && (
             <div className="empty-state"><div className="empty-icon">👥</div><div className="empty-text">Aucun employé actif</div></div>
           )}
 
@@ -1491,7 +1327,6 @@ function App() {
           {tab === "results" && (
             <div>
               <OffWorkPanel employes={employes} colorMap={colorMap} />
-              {/* Tableau récap de tous les employés */}
               <div className="monthly-table-wrap">
                 <div className="monthly-table-header">
                   <span>Récapitulatif du jour — Tous les employés</span>
@@ -1560,7 +1395,7 @@ function App() {
               />
             </div>
           )}
-          {tab === "monthly" && !selected && (
+          {tab === "monthly" && !selected && data !== null && (
             <div className="empty-state"><div className="empty-icon">📅</div><div className="empty-text">Sélectionnez un employé dans la barre latérale</div></div>
           )}
         </div>

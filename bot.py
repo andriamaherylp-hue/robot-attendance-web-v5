@@ -66,7 +66,7 @@ ALLOWED_GROUP_ID = -1003922818442
 # =========================
 # MANAGER — mentionné quand une pause est dépassée
 # =========================
-MANAGER_USERNAMES = ["@apasiihhhzz", "@Huruphidup", "@voplaledalala2" ]  # Remplacez par les usernames Telegram des managers
+MANAGER_USERNAMES = ["@apasiihhhzz", "@Huruphidup"]
 managers_mention = " ".join(MANAGER_USERNAMES)
 
 # =========================
@@ -298,7 +298,7 @@ def build_break_reminder(u: dict, now: datetime) -> str:
         f"{emoji} You are still on a {label} break.\n\n"
         f"Please check in and return to your seat promptly after completing the activity.\n\n"
         f"Press 🔵 BACK TO SEAT once you are seated.\n\n"
-        f"*Yo man, your lack of awareness means you ain't focused on the job.*\u201d"
+        f"\u201cYo man, your lack of awareness means you ain't focused on the job.\u201d"
     )
 
 def build_back_to_seat_msg(name, username, user_id, now, b_start,
@@ -418,7 +418,7 @@ async def _send_break_warning(bot, chat_id, user_id, name, username,
                 f"*⚠️ Warning: You still have less than 2 minutes left "
                 f"for your {label} break.*\n\n"
                 f"Please make sure to return to your seat promptly once you have finished the activity.\n\n"
-                f"*💸 Yo man, messin' up your time management gonna get you punished — this company don't play, and the grind don't wait.*"
+                f"💸 Yo man, messin' up your time management gonna get you punished — this company don't play, and the grind don't wait."
             ),
             parse_mode="Markdown"
         )
@@ -434,9 +434,8 @@ async def _send_break_warning(bot, chat_id, user_id, name, username,
             f"🚨 Time's up! Your {label} time limit has been reached.\n\n"
             f"Please return to your seat immediately after completing the activity.\n\n"
             f"And press 🔵 BACK TO SEAT!\n\n"
-            f"*Yo man, your lack of awareness means you ain't focused on the job.*"
-        ),
-        parse_mode="Markdown"
+            f"\u201cYo man, your lack of awareness means you ain't focused on the job.\u201d"
+        )
     )
 
     prev_offset = 0
@@ -478,9 +477,8 @@ async def _send_break_warning(bot, chat_id, user_id, name, username,
                 f"⚠️ Over limit by: +{over_str}⚠️\n\n"
                 f"💡 Please press 🔵 BACK TO SEAT immediately.\n"
                 f"Be careful not to spend too much time on breaks, time is precious and should not be wasted.\n\n"
-                f"*💸 Yo man, messin' up your time management gonna get you punished — this company don't play, and the grind don't wait.*"
-            ),
-            parse_mode="Markdown"
+                f"💸 Yo man, messin' up your time management gonna get you punished — this company don't play, and the grind don't wait."
+            )
         )
 
 # =========================
@@ -770,8 +768,8 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"⛔ {emoji} *{label.upper()} — Break not allowed between 18:00–19:00*\n\n"
             f"*🕕 It is currently {now.strftime('%H:%M')}.*\n\n"
             f"*One hour before the end of workday, you are expected to return to your seat.*\n\n"
-            f"*Please stay at your seat until 19:00.*\n\n"
-            f"🏆 Well done on the effort — control it today, get better results tomorrow.",
+            f"*Please stay at your seat until 19:00.*\n"
+            f"🏆 You are almost there — finish strong!",
             parse_mode="Markdown"
         )
         return
@@ -796,7 +794,7 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
         retard_msg     = ""
 
         if is_first_start:
-            normal_start   = now.replace(hour=7, minute=40, second=0, microsecond=0)
+            normal_start   = now.replace(hour=8, minute=0, second=0, microsecond=0)
             diff           = (now - normal_start).total_seconds()
             retard_sec_val = max(diff, 0)
             u["retard_sec"]       = retard_sec_val
@@ -813,7 +811,7 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     retard_str = f"{r_sec} seconds"
                 retard_msg = (
                     f"\n⚠️ *LATE ARRIVAL*\n"
-                    f"You started work at {now.strftime('%H:%M:%S')}, which is *{retard_str} late* (expected 07:40:00).\n"
+                    f"You started work at {now.strftime('%H:%M:%S')}, which is *{retard_str} late* (expected 08:00:00).\n"
                     f"This lateness has been recorded.\n"
                     f"👀 {managers_mention}"
                 )
@@ -841,8 +839,8 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"🚽 Big toilet   — 2x × 20 minutes\n"
             f"🚬 Smoke         — 5x × 7 minutes\n"
             f"🚻 Small toilet — unlimited × 7 minutes\n"
-            f"──────────────────────\n"
-            f"*💸 Yo, stay sharp — chase that paper and make today count!*\n"
+            f"──────────────────────\n\n"
+            f"*☀️ Have a great and productive day, everyone!*"
             + retard_msg,
             parse_mode="Markdown"
         )
@@ -881,6 +879,7 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         if u.get("warn_task") and not u["warn_task"].done():
             u["warn_task"].cancel()
+
         u["warn_task"] = asyncio.create_task(
             _send_break_warning(
                 bot=context.bot,
@@ -977,8 +976,8 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
             stats["statut"]              = "Absent"
             stats["temps_travail_sec"]   = int(work_sec)
             stats["temps_effectif_sec"]  = int(net_sec)
-            # Départ anticipé (heure normale = 18:27:00)
-            normal_end = end_time.replace(hour=18, minute=27, second=00, microsecond=0)
+            # Départ anticipé (heure normale = 19:00)
+            normal_end = end_time.replace(hour=19, minute=0, second=0, microsecond=0)
             diff_depart = (normal_end - end_time).total_seconds()
             stats["depart_anticipe_min"] = max(int(diff_depart / 60), 0)
 
@@ -1030,6 +1029,7 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"🚻 Toilet breaks today : {toilet_count}X\n"
             f"🚬 Smoke breaks today  : {smoke_count}X\n"
             f"──────────────────────\n\n"
+            f"💡 *You can press 🟢 Start Work again if you return later today.*"
         )
 
         await update.message.reply_text(msg, parse_mode="Markdown")
@@ -1046,7 +1046,6 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if save_to_db:
             save_event(user_id, name, username, OFF_SHIFT)
             asyncio.create_task(_async_save_daily(user_id, name, username, stats))
-        return
         return
 
 
@@ -1136,7 +1135,7 @@ def build_stats_payload() -> dict:
                 "username":  username,
                 "statut":    statut,
 
-                "heure_arrivee":   work_start.strftime("%H:%M") if work_start else "--:--",
+                "heure_arrivee":   (first_work_start or work_start).strftime("%H:%M") if (first_work_start or work_start) else "--:--",
                 "heure_depart":    "--:--",
 
                 "retard_min":         retard_min,
