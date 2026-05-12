@@ -75,7 +75,7 @@ managers_mention = " ".join(MANAGER_USERNAMES)
 # Employés dont l'heure de début diffère de 07:40
 # =========================
 CUSTOM_START_TIMES = {
-    "@maherylp": (8, 0),   # heure, minute
+    "ＭΛＨΞＲΨ - 米 李 🦅": (8, 0),   # heure, minute
     # "autreusername": (9, 0),  ← ajoute d'autres ici si besoin
 }
 DEFAULT_START_TIME = (7, 40)  # heure par défaut pour tous les autres
