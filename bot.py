@@ -75,7 +75,7 @@ managers_mention = " ".join(MANAGER_USERNAMES)
 # Employés dont l'heure de début diffère de 07:40
 # =========================
 CUSTOM_START_TIMES = {
-    "ＭΛＨΞＲΨ - 米 李 🦅": (8, 0),   # heure, minute
+    "maherylp": (8, 0),   # heure, minute
     # "autreusername": (9, 0),  ← ajoute d'autres ici si besoin
 }
 DEFAULT_START_TIME = (7, 40)  # heure par défaut pour tous les autres
@@ -298,7 +298,8 @@ def build_break_reminder(u: dict, now: datetime) -> str:
                 f"{line1}\n\n"
                 f"{line2}\n{line3}\n"
                 f"⚠️ Over limit by {fmt_duration_short(overtime)}\n\n"
-                f"Please check in and return to your seat and Press 🔵 BACK TO SEAT."
+                f"Please check in and return to your seat and Press 🔵 BACK TO SEAT.\n\n"
+                f"Be careful not to spend too much time on breaks, time is precious and should not be wasted."
             )
         return (
             f"{line1}\n\n"
