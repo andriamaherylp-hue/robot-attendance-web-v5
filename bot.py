@@ -66,7 +66,7 @@ ALLOWED_GROUP_ID = -1003922818442
 # =========================
 # MANAGER — mentionné quand une pause est dépassée
 # =========================
-MANAGER_USERNAMES = ["@apasiihhhzz", "@Huruphidup"]
+MANAGER_USERNAMES = ["@apasiihhhzz", "@Huruphidup", "@voplaledalala2" ]  # Remplacez par les usernames Telegram des managers
 managers_mention = " ".join(MANAGER_USERNAMES)
 
 # =========================
@@ -138,14 +138,18 @@ users_lock = Lock()
 
 def _default_user_context() -> dict:
     return {
-        "state":         OFF_SHIFT,
-        "work_start":    None,
-        "break_start":   None,
-        "break_type":    None,
-        "sessions":      [],
-        "break_counts":  {},
-        "last_date":     None,
-        "warn_task":     None
+        "state":              OFF_SHIFT,
+        "work_start":         None,   # heure du dernier Start Work (pour affichage arrivée)
+        "first_work_start":   None,   # toute première arrivée du jour (jamais écrasée)
+        "break_start":        None,
+        "break_type":         None,
+        "sessions":           [],     # pauses terminées
+        "work_segments":      [],     # segments de travail [{start, end, duration}]
+        "break_counts":       {},
+        "last_date":          None,
+        "warn_task":          None,
+        "started_today":      False,
+        "retard_sec":         0,      # retard en secondes (calculé au 1er Start Work)
     }
 
 def _default_user() -> dict:
@@ -188,9 +192,17 @@ def check_and_reset_daily(u: dict) -> dict:
     """Remet à zéro les flags journaliers à minuit (Madagascar)."""
     today = today_madagascar().isoformat()
     if u.get("last_date") != today:
-        u["started_today"] = False
-        u["break_counts"]  = {}
-        u["last_date"]     = today
+        u["started_today"]    = False
+        u["break_counts"]     = {}
+        u["last_date"]        = today
+        u["work_segments"]    = []
+        u["sessions"]         = []
+        u["first_work_start"] = None
+        u["work_start"]       = None
+        u["retard_sec"]       = 0
+        u["state"]            = OFF_SHIFT
+        u["break_start"]      = None
+        u["break_type"]       = None
     u.pop("lunch_taken", None)
     return u
 
@@ -286,7 +298,7 @@ def build_break_reminder(u: dict, now: datetime) -> str:
         f"{emoji} You are still on a {label} break.\n\n"
         f"Please check in and return to your seat promptly after completing the activity.\n\n"
         f"Press 🔵 BACK TO SEAT once you are seated.\n\n"
-        f"\u201cYo man, your lack of awareness means you ain't focused on the job.\u201d"
+        f"*Yo man, your lack of awareness means you ain't focused on the job.*\u201d"
     )
 
 def build_back_to_seat_msg(name, username, user_id, now, b_start,
@@ -406,7 +418,7 @@ async def _send_break_warning(bot, chat_id, user_id, name, username,
                 f"*⚠️ Warning: You still have less than 2 minutes left "
                 f"for your {label} break.*\n\n"
                 f"Please make sure to return to your seat promptly once you have finished the activity.\n\n"
-                f"💸 Yo man, messin' up your time management gonna get you punished — this company don't play, and the grind don't wait."
+                f"*💸 Yo man, messin' up your time management gonna get you punished — this company don't play, and the grind don't wait.*"
             ),
             parse_mode="Markdown"
         )
@@ -422,8 +434,9 @@ async def _send_break_warning(bot, chat_id, user_id, name, username,
             f"🚨 Time's up! Your {label} time limit has been reached.\n\n"
             f"Please return to your seat immediately after completing the activity.\n\n"
             f"And press 🔵 BACK TO SEAT!\n\n"
-            f"\u201cYo man, your lack of awareness means you ain't focused on the job.\u201d"
-        )
+            f"*Yo man, your lack of awareness means you ain't focused on the job.*"
+        ),
+        parse_mode="Markdown"
     )
 
     prev_offset = 0
@@ -465,8 +478,9 @@ async def _send_break_warning(bot, chat_id, user_id, name, username,
                 f"⚠️ Over limit by: +{over_str}⚠️\n\n"
                 f"💡 Please press 🔵 BACK TO SEAT immediately.\n"
                 f"Be careful not to spend too much time on breaks, time is precious and should not be wasted.\n\n"
-                f"💸 Yo man, messin' up your time management gonna get you punished — this company don't play, and the grind don't wait."
-            )
+                f"*💸 Yo man, messin' up your time management gonna get you punished — this company don't play, and the grind don't wait.*"
+            ),
+            parse_mode="Markdown"
         )
 
 # =========================
@@ -515,8 +529,10 @@ def _compute_user_stats(u: dict, now: datetime) -> dict:
     Retourne un dict compatible avec save_daily_status().
     """
     state               = u.get("state", OFF_SHIFT)
-    work_start          = u.get("work_start")
+    work_start          = u.get("work_start")          # dernier start work (segment en cours)
+    first_work_start    = u.get("first_work_start")    # toute première arrivée du jour
     sessions            = u.get("sessions", [])
+    work_segments       = u.get("work_segments", [])   # segments terminés
     break_counts        = u.get("break_counts", {})
     current_break_type  = u.get("break_type")
     current_break_start = u.get("break_start")
@@ -528,10 +544,10 @@ def _compute_user_stats(u: dict, now: datetime) -> dict:
     else:
         statut = "Absent"
 
-    # Temps de travail brut (depuis l'arrivée)
-    work_total_sec = 0
-    if work_start:
-        work_total_sec = (now - work_start).total_seconds()
+    # Temps de travail = segments terminés + segment en cours
+    work_total_sec = sum(s["duration"] for s in work_segments)
+    if work_start and state in (WORKING,) | BREAK_STATES:
+        work_total_sec += (now - work_start).total_seconds()
 
     # Total pauses terminées
     break_total_sec = sum(s["duration"] for s in sessions)
@@ -548,12 +564,9 @@ def _compute_user_stats(u: dict, now: datetime) -> dict:
             limit = LIMITS.get(s["type"], 0)
             overdue_sec += max(s["duration"] - limit, 0)
 
-    # Retard (heure normale d'arrivée = 08:00)
-    retard_min = 0
-    if work_start:
-        normal_start = work_start.replace(hour=8, minute=0, second=0, microsecond=0)
-        diff = (work_start - normal_start).total_seconds()
-        retard_min = max(int(diff / 60), 0)
+    # Retard — utilise retard_sec stocké au 1er Start Work (avec secondes)
+    retard_sec = u.get("retard_sec", 0)
+    retard_min = int(retard_sec // 60)
 
     # Stats par type de pause
     def _pause(btype):
@@ -570,9 +583,10 @@ def _compute_user_stats(u: dict, now: datetime) -> dict:
 
     return {
         "statut":                 statut,
-        "heure_arrivee":          work_start.strftime("%H:%M") if work_start else "--:--",
+        "heure_arrivee":          first_work_start.strftime("%H:%M") if first_work_start else (work_start.strftime("%H:%M") if work_start else "--:--"),
         "heure_depart":           "--:--",
         "retard_min":             retard_min,
+        "retard_sec":             int(retard_sec),
         "depart_anticipe_min":    0,
         "temps_travail_sec":      int(work_total_sec),
         "temps_effectif_sec":     int(effective_sec),
@@ -756,8 +770,8 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"⛔ {emoji} *{label.upper()} — Break not allowed between 18:00–19:00*\n\n"
             f"*🕕 It is currently {now.strftime('%H:%M')}.*\n\n"
             f"*One hour before the end of workday, you are expected to return to your seat.*\n\n"
-            f"*Please stay at your seat until 19:00.*\n"
-            f"🏆 You are almost there — finish strong!",
+            f"*Please stay at your seat until 19:00.*\n\n"
+            f"🏆 Well done on the effort — control it today, get better results tomorrow.",
             parse_mode="Markdown"
         )
         return
@@ -766,7 +780,8 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # START WORK
     # ========================
     if text == "🟢 Start Work":
-        if u.get("started_today"):
+        # Cas : déjà en train de travailler (même session, sans Off Work entre les deux)
+        if u.get("state") == WORKING:
             await update.message.reply_text(
                 "*⚠️ You have already STARTED WORK today.*\n\n"
                 "Just work hard and take a break when you really need it.\n\n"
@@ -775,10 +790,42 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
             return
 
+        # Calcul du retard (uniquement au tout premier Start Work de la journée)
+        is_first_start = not u.get("started_today", False)
+        retard_sec_val = 0
+        retard_msg     = ""
+
+        if is_first_start:
+            normal_start   = now.replace(hour=7, minute=40, second=0, microsecond=0)
+            diff           = (now - normal_start).total_seconds()
+            retard_sec_val = max(diff, 0)
+            u["retard_sec"]       = retard_sec_val
+            u["first_work_start"] = now   # première arrivée du jour, jamais écrasée
+
+            if retard_sec_val > 0:
+                r_min = int(retard_sec_val) // 60
+                r_sec = int(retard_sec_val) % 60
+                if r_min and r_sec:
+                    retard_str = f"{r_min} minutes and {r_sec} seconds"
+                elif r_min:
+                    retard_str = f"{r_min} minutes"
+                else:
+                    retard_str = f"{r_sec} seconds"
+                retard_msg = (
+                    f"\n⚠️ *LATE ARRIVAL*\n"
+                    f"You started work at {now.strftime('%H:%M:%S')}, which is *{retard_str} late* (expected 07:40:00).\n"
+                    f"This lateness has been recorded.\n"
+                    f"👀 {managers_mention}"
+                )
+        # Si ce n'est pas le premier start (retour après Off Work), on garde retard_sec déjà stocké
+
         u["started_today"] = True
-        u["work_start"]    = now
+        u["work_start"]    = now    # début du segment en cours
         u["state"]         = WORKING
-        u["sessions"]      = []
+
+        # Ne pas reset les sessions ni break_counts — on accumule sur la journée
+        if "work_segments" not in u:
+            u["work_segments"] = []
 
         await update.message.reply_text(
             f"🟢 START WORK\n\n"
@@ -794,8 +841,9 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"🚽 Big toilet   — 2x × 20 minutes\n"
             f"🚬 Smoke         — 5x × 7 minutes\n"
             f"🚻 Small toilet — unlimited × 7 minutes\n"
-            f"──────────────────────\n\n"
-            f"*☀️ Have a great and productive day, everyone!*",
+            f"──────────────────────\n"
+            f"*💸 Yo, stay sharp — chase that paper and make today count!*\n"
+            + retard_msg,
             parse_mode="Markdown"
         )
 
@@ -833,7 +881,6 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         if u.get("warn_task") and not u["warn_task"].done():
             u["warn_task"].cancel()
-
         u["warn_task"] = asyncio.create_task(
             _send_break_warning(
                 bot=context.bot,
@@ -907,9 +954,21 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         end_time   = now
         start_time = u["work_start"]
-        work_sec   = (end_time - start_time).total_seconds()
-        break_sec  = sum(s["duration"] for s in u["sessions"])
-        net_sec    = max(work_sec - break_sec, 0)
+        seg_sec    = (end_time - start_time).total_seconds()
+
+        # Enregistre le segment de travail qui se termine
+        if "work_segments" not in u:
+            u["work_segments"] = []
+        u["work_segments"].append({
+            "start":    start_time,
+            "end":      end_time,
+            "duration": seg_sec
+        })
+
+        # Calcul du total sur toute la journée
+        work_sec  = sum(s["duration"] for s in u["work_segments"])
+        break_sec = sum(s["duration"] for s in u["sessions"])
+        net_sec   = max(work_sec - break_sec, 0)
 
         # ── Calcul stats complet avant reset ──
         if save_to_db:
@@ -918,8 +977,8 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
             stats["statut"]              = "Absent"
             stats["temps_travail_sec"]   = int(work_sec)
             stats["temps_effectif_sec"]  = int(net_sec)
-            # Départ anticipé (heure normale = 19:00)
-            normal_end = end_time.replace(hour=19, minute=0, second=0, microsecond=0)
+            # Départ anticipé (heure normale = 18:27:00)
+            normal_end = end_time.replace(hour=18, minute=27, second=00, microsecond=0)
             diff_depart = (normal_end - end_time).total_seconds()
             stats["depart_anticipe_min"] = max(int(diff_depart / 60), 0)
 
@@ -951,12 +1010,15 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         + type_stats[BREAK_TOILET_BIG]["count"])
         smoke_count  = type_stats[BREAK_SMOKE]["count"]
 
+        # Heure d'arrivée = première arrivée du jour
+        first_start = u.get("first_work_start") or start_time
+
         msg = (
             f"👤 User : {name}\n"
             f"🪪 ID   : {user_id}\n\n"
             f"✅ {now.strftime('%d/%m %H:%M:%S')} Work time for today saved.\n\n"
             f"📅 Date  : {now.strftime('%d/%m/%Y')}\n"
-            f"🕐 Start : {start_time.strftime('%H:%M:%S')}\n"
+            f"🕐 Start : {first_start.strftime('%H:%M:%S')}\n"
             f"🕐 End   : {end_time.strftime('%H:%M:%S')}\n\n"
             f"⏱ Total shift: {fmt_duration(work_sec)}\n"
             f"☕ Total breaks: {fmt_duration(break_sec)}\n"
@@ -967,15 +1029,24 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"🍽  Meals today         : {eat_count}X\n"
             f"🚻 Toilet breaks today : {toilet_count}X\n"
             f"🚬 Smoke breaks today  : {smoke_count}X\n"
-            f"──────────────────────\n"
+            f"──────────────────────\n\n"
         )
 
-        await update.message.reply_text(msg)
-        reset_user_context(user_id, save_to_db, group_id)
+        await update.message.reply_text(msg, parse_mode="Markdown")
+
+        # Mettre l'état à OFF_SHIFT sans effacer l'historique du jour
+        u["state"]       = OFF_SHIFT
+        u["work_start"]  = None
+        u["break_start"] = None
+        u["break_type"]  = None
+        if u.get("warn_task") and not u["warn_task"].done():
+            u["warn_task"].cancel()
+        u["warn_task"] = None
 
         if save_to_db:
             save_event(user_id, name, username, OFF_SHIFT)
             asyncio.create_task(_async_save_daily(user_id, name, username, stats))
+        return
         return
 
 
@@ -1004,9 +1075,11 @@ def build_stats_payload() -> dict:
             if store_key != expected_key:
                 continue
 
-            state      = ctx.get("state", OFF_SHIFT)
-            work_start = ctx.get("work_start")
-            sessions   = ctx.get("sessions", [])
+            state        = ctx.get("state", OFF_SHIFT)
+            work_start   = ctx.get("work_start")
+            first_work_start = ctx.get("first_work_start")
+            sessions     = ctx.get("sessions", [])
+            work_segments = ctx.get("work_segments", [])
             break_counts = ctx.get("break_counts", {})
 
             if state == WORKING:
@@ -1028,9 +1101,9 @@ def build_stats_payload() -> dict:
                 current_break_limit    = limit
                 current_break_exceeded = elapsed > limit
 
-            work_total_sec = 0
-            if work_start:
-                work_total_sec = (now - work_start).total_seconds()
+            work_total_sec = sum(s["duration"] for s in work_segments)
+            if work_start and state in (WORKING,) | BREAK_STATES:
+                work_total_sec += (now - work_start).total_seconds()
 
             break_total_sec = sum(s["duration"] for s in sessions)
             if current_break_start and state in BREAK_STATES:
@@ -1044,11 +1117,9 @@ def build_stats_payload() -> dict:
                     limit = LIMITS.get(s["type"], 0)
                     overdue_sec += max(s["duration"] - limit, 0)
 
-            retard_min = 0
-            if work_start:
-                normal_start = work_start.replace(hour=8, minute=0, second=0, microsecond=0)
-                diff = (work_start - normal_start).total_seconds()
-                retard_min = max(int(diff / 60), 0)
+            retard_sec_val = ctx.get("retard_sec", 0)
+            retard_min = int(retard_sec_val // 60)
+            retard_sec_display = int(retard_sec_val % 60)
 
             depart_anticipe_min = 0
 
