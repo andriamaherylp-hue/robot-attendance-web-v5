@@ -544,7 +544,7 @@ def _compute_user_stats(u: dict, now: datetime) -> dict:
 
     # Temps de travail = segments terminés + segment en cours
     work_total_sec = sum(s["duration"] for s in work_segments)
-    if work_start and state in (WORKING,) | BREAK_STATES:
+    if work_start and state in ({WORKING} | BREAK_STATES):
         work_total_sec += (now - work_start).total_seconds()
 
     # Total pauses terminées
@@ -1101,7 +1101,7 @@ def build_stats_payload() -> dict:
                 current_break_exceeded = elapsed > limit
 
             work_total_sec = sum(s["duration"] for s in work_segments)
-            if work_start and state in (WORKING,) | BREAK_STATES:
+            if work_start and state in ({WORKING} | BREAK_STATES):
                 work_total_sec += (now - work_start).total_seconds()
 
             break_total_sec = sum(s["duration"] for s in sessions)
