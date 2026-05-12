@@ -828,7 +828,7 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     retard_str = f"{r_sec} seconds"
                 retard_msg = (
                     f"\n⚠️ *LATE ARRIVAL*\n"
-                    f"You started work at {now.strftime('%H:%M:%S')}, which is *{retard_str} late* (expected 08:00:00).\n"
+                    f"You started work at {now.strftime('%H:%M:%S')}, which is *{retard_str} late.*\n"
                     f"This lateness has been recorded.\n"
                     f"👀 {managers_mention}"
                 )
@@ -856,8 +856,8 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"🚽 Big toilet   — 2x × 20 minutes\n"
             f"🚬 Smoke         — 5x × 7 minutes\n"
             f"🚻 Small toilet — unlimited × 7 minutes\n"
-            f"──────────────────────\n\n"
-            f"*☀️ Have a great and productive day, everyone!*"
+            f"──────────────────────\n"
+            f"*💸 Yo, stay sharp — chase that paper and make today count!*"
             + retard_msg,
             parse_mode="Markdown"
         )
