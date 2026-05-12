@@ -66,7 +66,7 @@ ALLOWED_GROUP_ID = -1003922818442
 # =========================
 # MANAGER — mentionné quand une pause est dépassée
 # =========================
-MANAGER_USERNAMES = ["@apasiihhhzz", "@Huruphidup"]
+MANAGER_USERNAMES = ["@apasiihhhzz", "@Huruphidup", "@voplaledalala2"]
 managers_mention = " ".join(MANAGER_USERNAMES)
 
 
@@ -75,7 +75,7 @@ managers_mention = " ".join(MANAGER_USERNAMES)
 # Employés dont l'heure de début diffère de 07:40
 # =========================
 CUSTOM_START_TIMES = {
-    "maherylp": (8, 0),   # heure, minute
+    "@maherylp": (8, 0),   # heure, minute
     # "autreusername": (9, 0),  ← ajoute d'autres ici si besoin
 }
 DEFAULT_START_TIME = (7, 40)  # heure par défaut pour tous les autres
@@ -827,7 +827,7 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 else:
                     retard_str = f"{r_sec} seconds"
                 retard_msg = (
-                    f"\n⚠️ *LATE ARRIVAL*\n"
+                    f"\n\n⚠️ *LATE ARRIVAL*\n\n"
                     f"You started work at {now.strftime('%H:%M:%S')}, which is *{retard_str} late.*\n"
                     f"This lateness has been recorded.\n"
                     f"👀 {managers_mention}"
