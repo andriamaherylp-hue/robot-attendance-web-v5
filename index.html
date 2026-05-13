@@ -3,7 +3,44 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>BOT-MANEMAN · Attendance</title>
+<title>UptimeRobot</title>
+
+<!-- ===================== FAVICON ===================== -->
+<!-- 
+  INSTRUCTIONS POUR LE FAVICON & LOGO :
+  1. Hébergez votre image logo sur un service (ex: Imgur, CDN, votre serveur)
+  2. Remplacez LOGO_URL ci-dessous par l'URL de votre image
+  3. Le favicon ET le logo dans la topbar seront mis à jour automatiquement
+-->
+<script>
+  // ✏️ MODIFIEZ CETTE URL avec l'URL publique de votre logo MADA Attendance
+  window.LOGO_URL = ""; // Ex: "https://i.imgur.com/XXXXXXX.png"
+  
+  // Injection dynamique du favicon
+  (function(){
+    if(window.LOGO_URL){
+      var link = document.createElement('link');
+      link.rel = 'icon';
+      link.type = 'image/png';
+      link.href = window.LOGO_URL;
+      document.head.appendChild(link);
+    } else {
+      // Fallback favicon emoji via canvas
+      var canvas = document.createElement('canvas');
+      canvas.width = 64; canvas.height = 64;
+      var ctx = canvas.getContext('2d');
+      ctx.font = '48px serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('⏱', 32, 36);
+      var link = document.createElement('link');
+      link.rel = 'icon';
+      link.href = canvas.toDataURL();
+      document.head.appendChild(link);
+    }
+  })();
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
@@ -82,12 +119,46 @@ input  { font-family: inherit; }
   padding:0 24px;
   transition: background var(--transition), border-color var(--transition);
 }
-.logo { display:flex; align-items:center; gap:10px; font-size:15px; font-weight:600; letter-spacing:-0.01em; }
-.logo-icon {
-  width:30px; height:30px; border-radius:8px;
-  background:linear-gradient(135deg,#22d37a,#4d9fff);
-  display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;
+
+/* ===================== LOGO ===================== */
+.logo {
+  display:flex; align-items:center; gap:10px;
+  font-size:15px; font-weight:600; letter-spacing:-0.01em;
 }
+.logo-img-wrap {
+  width:38px; height:38px; border-radius:10px;
+  overflow:hidden; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  /* Subtle shadow to make the logo pop */
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
+}
+.logo-img-wrap img {
+  width:100%; height:100%; object-fit:contain;
+}
+/* Fallback icon when no image URL is set */
+.logo-icon-fallback {
+  width:38px; height:38px; border-radius:10px;
+  background:linear-gradient(135deg,#22d37a,#4d9fff);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; flex-shrink:0;
+  filter: drop-shadow(0 2px 6px rgba(34,211,122,0.3));
+}
+.logo-text {
+  display:flex; flex-direction:column; line-height:1.1;
+}
+.logo-title {
+  font-size:15px; font-weight:700; letter-spacing:0.01em;
+  background: linear-gradient(90deg, var(--text) 60%, var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.logo-sub {
+  font-size:10px; font-weight:500; letter-spacing:0.08em;
+  text-transform:uppercase; color:var(--text3);
+  -webkit-text-fill-color: var(--text3);
+}
+
 .topbar-center { display:flex; align-items:center; gap:6px; }
 .topbar-right  { display:flex; align-items:center; gap:8px; }
 
@@ -374,7 +445,8 @@ const { useState, useEffect, useRef, useCallback, useMemo } = React;
 // ===================== i18n =====================
 const I18N = {
   en: {
-    appTitle:"BOT-MANEMAN",
+    appTitle:"UptimeRobot",
+    appSub:"Tracking",
     tabDaily:"Daily", tabResults:"Results", tabMonthly:"Monthly",
     live:"Live", demo:"Demo",
     settingsTitle:"Settings",
@@ -427,7 +499,8 @@ const I18N = {
     days:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
   },
   fr: {
-    appTitle:"BOT-MANEMAN",
+    appTitle:"UptimeRobot",
+    appSub:"Suivi",
     tabDaily:"Quotidien", tabResults:"Résultats", tabMonthly:"Mensuel",
     live:"En direct", demo:"Démo",
     settingsTitle:"Paramètres",
@@ -480,7 +553,8 @@ const I18N = {
     days:["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"],
   },
   zh: {
-    appTitle:"BOT-MANEMAN",
+    appTitle:"UptimeRobot",
+    appSub:"考勤",
     tabDaily:"每日", tabResults:"结果", tabMonthly:"每月",
     live:"实时", demo:"演示",
     settingsTitle:"设置",
@@ -636,6 +710,36 @@ function makeDemoHistory(userId){
     }
   }
   return h;
+}
+
+// ===================== LOGO COMPONENT =====================
+function AppLogo({t}){
+  const logoUrl = window.LOGO_URL || "";
+  const[imgOk,setImgOk]=React.useState(!!logoUrl);
+  if(logoUrl && imgOk){
+    return(
+      <div className="logo">
+        <div className="logo-img-wrap">
+          <img src={logoUrl} alt="UptimeRobot Logo"
+               onError={()=>setImgOk(false)}/>
+        </div>
+        <div className="logo-text">
+          <span className="logo-title">{t.appTitle}</span>
+          <span className="logo-sub">{t.appSub}</span>
+        </div>
+      </div>
+    );
+  }
+  // Fallback: gradient icon
+  return(
+    <div className="logo">
+      <div className="logo-icon-fallback">⏱</div>
+      <div className="logo-text">
+        <span className="logo-title">{t.appTitle}</span>
+        <span className="logo-sub">{t.appSub}</span>
+      </div>
+    </div>
+  );
 }
 
 // ===================== COMPONENTS =====================
@@ -1098,10 +1202,7 @@ function App(){
     <div>
       {/* TOPBAR */}
       <div className="topbar">
-        <div className="logo">
-          <div className="logo-icon">⏱</div>
-          {t.appTitle}
-        </div>
+        <AppLogo t={t}/>
         <div className="topbar-center">
           <div className="tab-pill">
             <button className={tab==="daily"  ?"active":""} onClick={()=>setTab("daily")}>{t.tabDaily}</button>
