@@ -769,8 +769,8 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"⛔ {emoji} *{label.upper()} — Daily limit reached*\n\n"
                 f"You have already used this break {count_taken}x today.\n"
                 f"Maximum allowed : {max_allowed}x per day\n\n"
-                f"⚠️ *Warning: Time discipline is essential.*\n"
-                f"Ignoring limits weakens your focus and respect for work.",
+                f"⚠️ *Warning: Time discipline is essential.*\n\n"
+                f"🔥 Ignoring limits weakens your focus and respect for work.",
                 parse_mode="Markdown"
             )
             return
