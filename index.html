@@ -1,789 +1,741 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>UptimeRobot Attendance</title>
+<title>BOT-MANEMAN · Attendance</title>
 <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-/* ===================== RESET & BASE ===================== */
+/* ===================== RESET ===================== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ===================== DARK THEME (default) ===================== */
 :root {
-  --bg:         #0d0f14;
-  --bg2:        #151820;
-  --bg3:        #1c1f2a;
-  --bg4:        #232736;
-  --border:     rgba(255,255,255,0.07);
-  --border2:    rgba(255,255,255,0.12);
-  --text:       #e8eaf0;
-  --text2:      #8b90a0;
-  --text3:      #555b6e;
-  --green:      #22d37a;
-  --green-bg:   rgba(34,211,122,0.1);
-  --green-b:    rgba(34,211,122,0.25);
-  --red:        #f04e5e;
-  --red-bg:     rgba(240,78,94,0.1);
-  --red-b:      rgba(240,78,94,0.25);
-  --amber:      #f5a623;
-  --amber-bg:   rgba(245,166,35,0.1);
-  --amber-b:    rgba(245,166,35,0.25);
-  --blue:       #4d9fff;
-  --blue-bg:    rgba(77,159,255,0.1);
-  --blue-b:     rgba(77,159,255,0.25);
-  --purple:     #a78bfa;
-  --purple-bg:  rgba(167,139,250,0.1);
-  --accent:     #22d37a;
-  --radius:     10px;
-  --radius-lg:  14px;
-  --radius-xl:  18px;
+  --bg:        #0d0f14;
+  --bg2:       #151820;
+  --bg3:       #1c1f2a;
+  --bg4:       #232736;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.12);
+  --text:      #e8eaf0;
+  --text2:     #8b90a0;
+  --text3:     #555b6e;
+  --topbar-bg: rgba(13,15,20,0.92);
+  --shadow:    rgba(0,0,0,0.35);
+  --green:     #22d37a; --green-bg: rgba(34,211,122,0.1);  --green-b: rgba(34,211,122,0.25);
+  --red:       #f04e5e; --red-bg:   rgba(240,78,94,0.1);   --red-b:   rgba(240,78,94,0.25);
+  --amber:     #f5a623; --amber-bg: rgba(245,166,35,0.1);  --amber-b: rgba(245,166,35,0.25);
+  --blue:      #4d9fff; --blue-bg:  rgba(77,159,255,0.1);  --blue-b:  rgba(77,159,255,0.25);
+  --purple:    #a78bfa; --purple-bg:rgba(167,139,250,0.1);
+  --accent:    #22d37a;
+  --radius:10px; --radius-lg:14px; --radius-xl:18px;
+  --transition: 0.2s ease;
 }
+
+/* ===================== LIGHT THEME ===================== */
+html.light {
+  --bg:        #f0f2f7;
+  --bg2:       #ffffff;
+  --bg3:       #f5f6fa;
+  --bg4:       #eaecf3;
+  --border:    rgba(0,0,0,0.07);
+  --border2:   rgba(0,0,0,0.13);
+  --text:      #141620;
+  --text2:     #4a5068;
+  --text3:     #9098b0;
+  --topbar-bg: rgba(240,242,247,0.93);
+  --shadow:    rgba(0,0,0,0.08);
+  --green:     #16a85a; --green-bg: rgba(22,168,90,0.08);   --green-b: rgba(22,168,90,0.22);
+  --red:       #d93447; --red-bg:   rgba(217,52,71,0.08);   --red-b:   rgba(217,52,71,0.22);
+  --amber:     #c97a0a; --amber-bg: rgba(201,122,10,0.08);  --amber-b: rgba(201,122,10,0.22);
+  --blue:      #1f6fd4; --blue-bg:  rgba(31,111,212,0.08);  --blue-b:  rgba(31,111,212,0.22);
+  --purple:    #7c5cd6; --purple-bg:rgba(124,92,214,0.08);
+  --accent:    #16a85a;
+}
+
 html { font-size: 15px; }
 body {
-  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  line-height: 1.5;
+  font-family: 'SF Pro Display',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background: var(--bg); color: var(--text);
+  min-height: 100vh; line-height: 1.5;
+  transition: background var(--transition), color var(--transition);
 }
 button { cursor: pointer; font-family: inherit; }
 input  { font-family: inherit; }
 
 /* ===================== SCROLLBAR ===================== */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--bg4); border-radius:3px; }
 
 /* ===================== TOPBAR ===================== */
 .topbar {
-  position: sticky; top: 0; z-index: 200;
-  background: rgba(13,15,20,0.92);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border);
-  height: 60px;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 28px;
+  position:sticky; top:0; z-index:200;
+  background: var(--topbar-bg);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  height:60px;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 24px;
+  transition: background var(--transition), border-color var(--transition);
 }
-.logo {
-  display: flex; align-items: center; gap: 10px;
-  font-size: 15px; font-weight: 600; letter-spacing: -0.01em;
-}
+.logo { display:flex; align-items:center; gap:10px; font-size:15px; font-weight:600; letter-spacing:-0.01em; }
 .logo-icon {
-  width: 30px; height: 30px; border-radius: 8px;
-  background: linear-gradient(135deg, #22d37a, #4d9fff);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px;
+  width:30px; height:30px; border-radius:8px;
+  background:linear-gradient(135deg,#22d37a,#4d9fff);
+  display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;
 }
-.topbar-center { display: flex; align-items: center; gap: 6px; }
-.topbar-right  { display: flex; align-items: center; gap: 12px; }
+.topbar-center { display:flex; align-items:center; gap:6px; }
+.topbar-right  { display:flex; align-items:center; gap:8px; }
 
 .tab-pill {
-  display: flex; background: var(--bg3);
-  border: 1px solid var(--border); border-radius: 999px; padding: 3px; gap: 2px;
+  display:flex; background:var(--bg3);
+  border:1px solid var(--border); border-radius:999px; padding:3px; gap:2px;
 }
 .tab-pill button {
-  padding: 5px 16px; border: none; border-radius: 999px;
-  font-size: 13px; font-weight: 500;
-  background: transparent; color: var(--text2);
-  transition: all 0.18s;
+  padding:5px 14px; border:none; border-radius:999px;
+  font-size:13px; font-weight:500;
+  background:transparent; color:var(--text2); transition:all 0.18s;
 }
 .tab-pill button.active {
-  background: var(--bg4); color: var(--text);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  background:var(--bg4); color:var(--text);
+  box-shadow:0 1px 4px var(--shadow);
 }
 
-.live-indicator {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 12px; color: var(--text2);
-}
-.live-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: var(--green); animation: blink 1.6s ease-in-out infinite;
-}
+.live-indicator { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text2); }
+.live-dot { width:7px; height:7px; border-radius:50%; background:var(--green); animation:blink 1.6s ease-in-out infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+@keyframes spin  { to { transform:rotate(360deg); } }
 
-.refresh-btn {
-  width: 32px; height: 32px; border-radius: 8px;
-  border: 1px solid var(--border2); background: var(--bg3);
-  color: var(--text2); font-size: 16px;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.15s;
+/* Icon buttons */
+.icon-btn {
+  height:32px; border-radius:8px;
+  border:1px solid var(--border2); background:var(--bg3);
+  color:var(--text2); font-size:13px; font-weight:500;
+  display:flex; align-items:center; justify-content:center; gap:5px;
+  padding:0 10px; transition:all 0.15s; white-space:nowrap;
 }
-.refresh-btn:hover { background: var(--bg4); color: var(--text); }
-.refresh-btn.spin svg { animation: spin 0.8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
+.icon-btn:hover { background:var(--bg4); color:var(--text); }
+.icon-btn.sq { width:32px; padding:0; }
+.icon-btn.spin svg { animation:spin 0.8s linear infinite; }
+
+/* Settings dropdown */
+.settings-wrap { position:relative; }
+.settings-panel {
+  position:absolute; top:38px; right:0; z-index:300;
+  background:var(--bg2); border:1px solid var(--border2);
+  border-radius:var(--radius-lg); padding:14px 16px;
+  min-width:220px;
+  box-shadow:0 8px 32px var(--shadow);
+  display:flex; flex-direction:column; gap:14px;
+}
+.sp-title { font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--text3); margin-bottom:4px; }
+.sp-row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.sp-label { font-size:13px; color:var(--text2); }
+
+/* Toggle switch */
+.toggle { position:relative; display:inline-block; width:38px; height:21px; flex-shrink:0; }
+.toggle input { opacity:0; width:0; height:0; }
+.toggle-slider {
+  position:absolute; cursor:pointer; inset:0;
+  background:var(--bg4); border-radius:999px; transition:.2s;
+}
+.toggle-slider::before {
+  content:''; position:absolute;
+  width:15px; height:15px; left:3px; bottom:3px;
+  background:var(--text2); border-radius:50%; transition:.2s;
+}
+.toggle input:checked + .toggle-slider { background:var(--accent); }
+.toggle input:checked + .toggle-slider::before { transform:translateX(17px); background:#fff; }
+
+/* Lang buttons */
+.lang-btns { display:flex; gap:5px; }
+.lang-btn {
+  padding:4px 10px; border-radius:6px; font-size:12px; font-weight:600;
+  border:1px solid var(--border2); background:transparent; color:var(--text2);
+  transition:all 0.15s;
+}
+.lang-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+html.light .lang-btn.active { color:#fff; }
+.lang-btn:hover:not(.active) { background:var(--bg3); color:var(--text); }
 
 /* ===================== LAYOUT ===================== */
-.app-shell { display: flex; min-height: calc(100vh - 60px); }
+.app-shell { display:flex; min-height:calc(100vh - 60px); }
 
-/* Sidebar */
 .sidebar {
-  width: 260px; flex-shrink: 0;
-  background: var(--bg2);
-  border-right: 1px solid var(--border);
-  padding: 16px 10px;
-  display: flex; flex-direction: column; gap: 4px;
-  overflow-y: auto;
+  width:260px; flex-shrink:0;
+  background:var(--bg2); border-right:1px solid var(--border);
+  padding:16px 10px;
+  display:flex; flex-direction:column; gap:4px;
+  overflow-y:auto;
+  transition: background var(--transition), border-color var(--transition);
 }
-.sidebar-label {
-  font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
-  color: var(--text3); text-transform: uppercase;
-  padding: 8px 10px 4px;
-}
-.user-row {
-  display: flex; align-items: center; gap: 10px;
-  padding: 9px 10px; border-radius: var(--radius);
-  cursor: pointer; transition: background 0.15s;
-  border: 1px solid transparent;
-}
-.user-row:hover   { background: var(--bg3); }
-.user-row.active  { background: var(--bg3); border-color: var(--border2); }
-.user-avatar {
-  width: 36px; height: 36px; border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 700; flex-shrink: 0;
-}
-.user-row-info { flex: 1; min-width: 0; }
-.user-row-name {
-  font-size: 13px; font-weight: 500;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.user-row-id { font-size: 11px; color: var(--text3); }
-.status-dot {
-  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-}
-.dot-present { background: var(--green); }
-.dot-pause   { background: var(--amber); }
-.dot-absent  { background: var(--text3); }
+.sidebar-label { font-size:10px; font-weight:600; letter-spacing:0.1em; color:var(--text3); text-transform:uppercase; padding:8px 10px 4px; }
+.user-row { display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:var(--radius); cursor:pointer; transition:background 0.15s; border:1px solid transparent; }
+.user-row:hover  { background:var(--bg3); }
+.user-row.active { background:var(--bg3); border-color:var(--border2); }
+.user-avatar { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0; }
+.user-row-info { flex:1; min-width:0; }
+.user-row-name { font-size:13px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.user-row-id   { font-size:11px; color:var(--text3); }
+.status-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.dot-present { background:var(--green); }
+.dot-pause   { background:var(--amber); }
+.dot-absent  { background:var(--text3); }
 
-/* Main content */
-.main-content { flex: 1; overflow-y: auto; padding: 24px 28px; }
+.main-content { flex:1; overflow-y:auto; padding:24px 28px; }
 
 /* ===================== SECTION TITLE ===================== */
-.section-title {
-  font-size: 11px; font-weight: 600; letter-spacing: 0.09em;
-  color: var(--text3); text-transform: uppercase; margin-bottom: 12px;
-}
+.section-title { font-size:11px; font-weight:600; letter-spacing:0.09em; color:var(--text3); text-transform:uppercase; margin-bottom:12px; }
 
 /* ===================== PROFILE HEADER ===================== */
 .profile-header {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--radius-xl); padding: 20px 24px;
-  margin-bottom: 20px;
+  display:flex; align-items:flex-start; justify-content:space-between;
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:var(--radius-xl); padding:20px 24px; margin-bottom:20px;
+  transition: background var(--transition), border-color var(--transition);
 }
-.profile-left { display: flex; align-items: center; gap: 16px; }
-.profile-avatar {
-  width: 52px; height: 52px; border-radius: 14px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px; font-weight: 700;
-}
-.profile-name { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 2px; }
-.profile-uid  { font-size: 12px; color: var(--text3); font-family: monospace; }
-.profile-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-.status-badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 5px 12px; border-radius: 999px;
-  font-size: 12px; font-weight: 600;
-}
-.badge-present { background: var(--green-bg); border: 1px solid var(--green-b); color: var(--green); }
-.badge-pause   { background: var(--amber-bg); border: 1px solid var(--amber-b); color: var(--amber); }
-.badge-absent  { background: var(--bg4);      border: 1px solid var(--border);  color: var(--text3); }
-.last-update   { font-size: 11px; color: var(--text3); }
+.profile-left  { display:flex; align-items:center; gap:16px; }
+.profile-avatar { width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700; }
+.profile-name  { font-size:18px; font-weight:600; letter-spacing:-0.01em; margin-bottom:2px; }
+.profile-uid   { font-size:12px; color:var(--text3); font-family:monospace; }
+.profile-right { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+.status-badge  { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:999px; font-size:12px; font-weight:600; }
+.badge-present { background:var(--green-bg); border:1px solid var(--green-b); color:var(--green); }
+.badge-pause   { background:var(--amber-bg); border:1px solid var(--amber-b); color:var(--amber); }
+.badge-absent  { background:var(--bg4);      border:1px solid var(--border);  color:var(--text3); }
+.last-update   { font-size:11px; color:var(--text3); }
 
 /* ===================== METRICS GRID ===================== */
-.metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 10px; margin-bottom: 20px;
-}
+.metrics-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-bottom:20px; }
 .metric-card {
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); padding: 14px 16px;
-  position: relative; overflow: hidden;
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:14px 16px;
+  position:relative; overflow:hidden;
+  transition: background var(--transition), border-color var(--transition);
 }
-.metric-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0;
-  height: 2px; border-radius: 2px 2px 0 0;
-}
-.metric-card.green::before  { background: var(--green); }
-.metric-card.red::before    { background: var(--red); }
-.metric-card.amber::before  { background: var(--amber); }
-.metric-card.blue::before   { background: var(--blue); }
-.metric-card.purple::before { background: var(--purple); }
-.metric-label {
-  font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--text3); margin-bottom: 6px;
-}
-.metric-value { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
-.metric-sub   { font-size: 11px; color: var(--text3); margin-top: 3px; }
-.metric-value.green  { color: var(--green); }
-.metric-value.red    { color: var(--red); }
-.metric-value.amber  { color: var(--amber); }
-.metric-value.blue   { color: var(--blue); }
-.metric-value.purple { color: var(--purple); }
+.metric-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; border-radius:2px 2px 0 0; }
+.metric-card.green::before  { background:var(--green); }
+.metric-card.red::before    { background:var(--red); }
+.metric-card.amber::before  { background:var(--amber); }
+.metric-card.blue::before   { background:var(--blue); }
+.metric-card.purple::before { background:var(--purple); }
+.metric-label { font-size:10px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--text3); margin-bottom:6px; }
+.metric-value { font-size:22px; font-weight:700; letter-spacing:-0.02em; line-height:1; }
+.metric-sub   { font-size:11px; color:var(--text3); margin-top:3px; }
+.metric-value.green  { color:var(--green); }
+.metric-value.red    { color:var(--red); }
+.metric-value.amber  { color:var(--amber); }
+.metric-value.blue   { color:var(--blue); }
+.metric-value.purple { color:var(--purple); }
 
 /* ===================== TWO-COL ===================== */
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
 
 /* ===================== INFO CARD ===================== */
-.info-card {
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); padding: 16px 18px;
-}
-.info-card-title {
-  font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
-  text-transform: uppercase; color: var(--text3); margin-bottom: 12px;
-}
-.info-row {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 7px 0;
-  border-bottom: 1px solid var(--border);
-}
-.info-row:last-child { border-bottom: none; }
-.info-row-label { font-size: 13px; color: var(--text2); display: flex; align-items: center; gap: 7px; }
-.info-row-icon  { font-size: 14px; width: 18px; text-align: center; }
-.info-row-val   { font-size: 13px; font-weight: 500; }
-.val-green { color: var(--green); }
-.val-red   { color: var(--red); }
-.val-amber { color: var(--amber); }
+.info-card { background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px 18px; transition: background var(--transition); }
+.info-card-title { font-size:12px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:var(--text3); margin-bottom:12px; }
+.info-row { display:flex; align-items:center; justify-content:space-between; padding:7px 0; border-bottom:1px solid var(--border); }
+.info-row:last-child { border-bottom:none; }
+.info-row-label { font-size:13px; color:var(--text2); display:flex; align-items:center; gap:7px; }
+.info-row-icon  { font-size:14px; width:18px; text-align:center; }
+.info-row-val   { font-size:13px; font-weight:500; }
+.val-green { color:var(--green); }
+.val-red   { color:var(--red); }
+.val-amber { color:var(--amber); }
 
 /* ===================== PAUSE CARDS ===================== */
-.pause-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;
-}
-.pause-item {
-  background: var(--bg3); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 10px 12px;
-}
-.pause-item-header {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 11px; color: var(--text2); margin-bottom: 6px;
-}
-.pause-item-emoji { font-size: 14px; }
-.pause-count { font-size: 18px; font-weight: 700; }
-.pause-dur   { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.pause-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+.pause-item { background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); padding:10px 12px; transition: background var(--transition); }
+.pause-item-header { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--text2); margin-bottom:6px; }
+.pause-item-emoji  { font-size:14px; }
+.pause-count { font-size:18px; font-weight:700; }
+.pause-dur   { font-size:11px; color:var(--text3); margin-top:1px; }
 
 /* ===================== ACTIVE BREAK BANNER ===================== */
-.break-banner {
-  background: var(--amber-bg); border: 1px solid var(--amber-b);
-  border-radius: var(--radius-lg); padding: 12px 16px;
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 16px;
-}
-.break-banner-left { display: flex; align-items: center; gap: 10px; }
-.break-banner-emoji { font-size: 20px; }
-.break-banner-label { font-size: 13px; font-weight: 600; color: var(--amber); }
-.break-banner-since { font-size: 11px; color: var(--text2); margin-top: 1px; }
-.break-banner-right { font-size: 12px; color: var(--text3); }
-.overdue { color: var(--red); font-weight: 600; }
+.break-banner { background:var(--amber-bg); border:1px solid var(--amber-b); border-radius:var(--radius-lg); padding:12px 16px; display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.break-banner-left  { display:flex; align-items:center; gap:10px; }
+.break-banner-emoji { font-size:20px; }
+.break-banner-label { font-size:13px; font-weight:600; color:var(--amber); }
+.break-banner-since { font-size:11px; color:var(--text2); margin-top:1px; }
+.break-banner-right { font-size:12px; color:var(--text3); }
+.overdue { color:var(--red); font-weight:600; }
 
 /* ===================== SESSIONS TABLE ===================== */
-.sessions-table {
-  width: 100%; border-collapse: collapse; font-size: 12px;
-}
-.sessions-table th {
-  text-align: left; padding: 6px 8px;
-  font-size: 10px; font-weight: 600; letter-spacing: 0.07em;
-  text-transform: uppercase; color: var(--text3);
-  border-bottom: 1px solid var(--border);
-}
-.sessions-table td {
-  padding: 8px 8px; border-bottom: 1px solid var(--border);
-  vertical-align: middle;
-}
-.sessions-table tr:last-child td { border-bottom: none; }
-.sessions-table tr:hover td { background: rgba(255,255,255,0.02); }
-.exceeded-pill {
-  display: inline-block; padding: 1px 7px; border-radius: 999px;
-  font-size: 10px; font-weight: 600;
-  background: var(--red-bg); border: 1px solid var(--red-b); color: var(--red);
-}
-.ok-pill {
-  display: inline-block; padding: 1px 7px; border-radius: 999px;
-  font-size: 10px; font-weight: 600;
-  background: var(--green-bg); border: 1px solid var(--green-b); color: var(--green);
-}
+.sessions-table { width:100%; border-collapse:collapse; font-size:12px; }
+.sessions-table th { text-align:left; padding:6px 8px; font-size:10px; font-weight:600; letter-spacing:0.07em; text-transform:uppercase; color:var(--text3); border-bottom:1px solid var(--border); }
+.sessions-table td { padding:8px; border-bottom:1px solid var(--border); vertical-align:middle; }
+.sessions-table tr:last-child td { border-bottom:none; }
+.sessions-table tr:hover td { background:var(--bg3); }
+.exceeded-pill { display:inline-block; padding:1px 7px; border-radius:999px; font-size:10px; font-weight:600; background:var(--red-bg); border:1px solid var(--red-b); color:var(--red); }
+.ok-pill       { display:inline-block; padding:1px 7px; border-radius:999px; font-size:10px; font-weight:600; background:var(--green-bg); border:1px solid var(--green-b); color:var(--green); }
 
 /* ===================== MONTHLY ===================== */
-.monthly-metrics {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr));
-  gap: 10px; margin-bottom: 20px;
-}
-.chart-card {
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); padding: 16px 18px; margin-bottom: 20px;
-}
-.chart-card-title {
-  font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
-  text-transform: uppercase; color: var(--text3); margin-bottom: 14px;
-}
-.chart-wrap { position: relative; width: 100%; height: 200px; }
-.monthly-table-wrap {
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); overflow: hidden;
-}
-.monthly-table-header {
-  padding: 12px 18px;
-  border-bottom: 1px solid var(--border);
-  font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
-  text-transform: uppercase; color: var(--text3);
-}
-.monthly-table {
-  width: 100%; border-collapse: collapse; font-size: 12px;
-}
-.monthly-table th {
-  padding: 8px 14px; text-align: left;
-  font-size: 10px; font-weight: 600; letter-spacing: 0.07em;
-  text-transform: uppercase; color: var(--text3);
-  border-bottom: 1px solid var(--border); background: var(--bg3);
-}
-.monthly-table td {
-  padding: 10px 14px; border-bottom: 1px solid var(--border);
-}
-.monthly-table tr:last-child td { border-bottom: none; }
-.monthly-table tr:hover td { background: rgba(255,255,255,0.02); }
+.monthly-metrics { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; margin-bottom:20px; }
+.chart-card { background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px 18px; margin-bottom:20px; transition: background var(--transition); }
+.chart-card-title { font-size:12px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:var(--text3); margin-bottom:14px; }
+.chart-wrap { position:relative; width:100%; height:200px; }
+.monthly-table-wrap { background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; transition: background var(--transition); }
+.monthly-table-header { padding:12px 18px; border-bottom:1px solid var(--border); font-size:12px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:var(--text3); display:flex; justify-content:space-between; align-items:center; }
+.monthly-table { width:100%; border-collapse:collapse; font-size:12px; }
+.monthly-table th { padding:8px 14px; text-align:left; font-size:10px; font-weight:600; letter-spacing:0.07em; text-transform:uppercase; color:var(--text3); border-bottom:1px solid var(--border); background:var(--bg3); }
+.monthly-table td { padding:10px 14px; border-bottom:1px solid var(--border); }
+.monthly-table tr:last-child td { border-bottom:none; }
+.monthly-table tr:hover td { background:var(--bg3); }
 
-/* ===================== EMPTY / ERROR STATES ===================== */
-.empty-state {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  min-height: 300px; color: var(--text3); gap: 12px;
-}
-.empty-icon { font-size: 40px; }
-.empty-text { font-size: 14px; }
-
-.error-banner {
-  background: var(--red-bg); border: 1px solid var(--red-b);
-  border-radius: var(--radius); padding: 10px 14px;
-  font-size: 13px; color: var(--red); margin-bottom: 16px;
-  display: flex; align-items: center; gap: 8px;
-}
+/* ===================== EMPTY / ERROR ===================== */
+.empty-state { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:300px; color:var(--text3); gap:12px; }
+.empty-icon  { font-size:40px; }
+.empty-text  { font-size:14px; }
+.error-banner { background:var(--red-bg); border:1px solid var(--red-b); border-radius:var(--radius); padding:10px 14px; font-size:13px; color:var(--red); margin-bottom:16px; display:flex; align-items:center; gap:8px; }
 
 /* ===================== API CONFIG ===================== */
-.config-bar {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--bg3); border: 1px solid var(--border2);
-  border-radius: var(--radius); padding: 6px 10px;
-}
-.config-bar input {
-  background: transparent; border: none; outline: none;
-  color: var(--text); font-size: 12px; font-family: monospace;
-  width: 260px;
-}
-.config-bar input::placeholder { color: var(--text3); }
-.config-bar-label { font-size: 11px; color: var(--text3); white-space: nowrap; }
-.apply-btn {
-  padding: 4px 12px; border-radius: 6px;
-  background: var(--accent); color: #000; font-size: 12px; font-weight: 600;
-  border: none; transition: opacity 0.15s;
-}
-.apply-btn:hover { opacity: 0.85; }
+.config-bar { display:flex; flex-direction:column; align-items:stretch; gap:6px; background:var(--bg3); border:1px solid var(--border2); border-radius:var(--radius); padding:8px 10px; }
+.config-bar input { background:transparent; border:none; outline:none; color:var(--text); font-size:12px; font-family:monospace; }
+.config-bar input::placeholder { color:var(--text3); }
+.apply-btn { padding:5px 12px; border-radius:6px; background:var(--accent); color:#fff; font-size:12px; font-weight:600; border:none; transition:opacity 0.15s; }
+.apply-btn:hover { opacity:0.85; }
 
 /* ===================== OFF WORK PANEL ===================== */
-.offwork-panel { border-radius: var(--radius-xl); overflow: hidden; border: 1px solid var(--border); margin-bottom: 18px; }
-.offwork-panel-header { padding: 14px 20px; background: var(--bg3); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
-.offwork-panel-title { font-size: 14px; font-weight: 600; }
-.offwork-panel-date  { font-size: 12px; color: var(--text3); margin-left: auto; font-family: monospace; }
-.offwork-cols { display: grid; grid-template-columns: 1fr 1fr; min-height: 160px; }
-.offwork-col  { padding: 16px 18px; }
-.offwork-col:first-child { border-right: 1px solid var(--border); }
-.offwork-col-title { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
-.col-ok    { color: var(--green); }
-.col-alert { color: var(--red); }
-.offwork-emp-row { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: var(--radius); margin-bottom: 5px; background: var(--bg3); border: 1px solid var(--border); }
-.offwork-emp-row.ok-row    { border-color: var(--green-b); background: var(--green-bg); }
-.offwork-emp-row.alert-row { border-color: var(--red-b);   background: var(--red-bg); }
-.offwork-emp-avatar { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
-.offwork-emp-name { font-size: 12px; font-weight: 500; }
-.offwork-emp-meta { font-size: 11px; color: var(--text3); margin-top: 1px; }
-.offwork-emp-badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
-.badge-ok    { background: var(--green-bg); border: 1px solid var(--green-b); color: var(--green); }
-.badge-alert { background: var(--red-bg);   border: 1px solid var(--red-b);   color: var(--red); }
-.offwork-empty { font-size: 12px; color: var(--text3); padding: 10px 0; font-style: italic; }
+.offwork-panel { border-radius:var(--radius-xl); overflow:hidden; border:1px solid var(--border); margin-bottom:18px; }
+.offwork-panel-header { padding:14px 20px; background:var(--bg3); border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+.offwork-panel-title  { font-size:14px; font-weight:600; }
+.offwork-panel-date   { font-size:12px; color:var(--text3); margin-left:auto; font-family:monospace; }
+.offwork-cols { display:grid; grid-template-columns:1fr 1fr; min-height:160px; }
+.offwork-col  { padding:16px 18px; background:var(--bg2); }
+.offwork-col:first-child { border-right:1px solid var(--border); }
+.offwork-col-title { font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:7px; }
+.col-ok    { color:var(--green); }
+.col-alert { color:var(--red); }
+.offwork-emp-row { display:flex; align-items:center; gap:10px; padding:7px 10px; border-radius:var(--radius); margin-bottom:5px; background:var(--bg3); border:1px solid var(--border); }
+.offwork-emp-row.ok-row    { border-color:var(--green-b); background:var(--green-bg); }
+.offwork-emp-row.alert-row { border-color:var(--red-b);   background:var(--red-bg); }
+.offwork-emp-avatar { width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; }
+.offwork-emp-name  { font-size:12px; font-weight:500; }
+.offwork-emp-meta  { font-size:11px; color:var(--text3); margin-top:1px; }
+.offwork-emp-badge { font-size:10px; font-weight:600; padding:2px 8px; border-radius:999px; white-space:nowrap; }
+.badge-ok    { background:var(--green-bg); border:1px solid var(--green-b); color:var(--green); }
+.badge-alert { background:var(--red-bg);   border:1px solid var(--red-b);   color:var(--red); }
+.offwork-empty { font-size:12px; color:var(--text3); padding:10px 0; font-style:italic; }
 
 /* ===================== CALENDAR ===================== */
-.calendar-wrap { margin-bottom: 18px; }
-.calendar-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-.calendar-nav-title { font-size: 14px; font-weight: 600; flex: 1; text-align: center; }
-.cal-nav-btn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.14s; }
-.cal-nav-btn:hover { background: var(--bg4); color: var(--text); }
-.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-.cal-day-header { text-align: center; font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text3); padding: 6px 0; }
-.cal-day { aspect-ratio: 1; border-radius: 8px; border: 1px solid transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.13s; position: relative; min-height: 44px; }
-.cal-day.empty { cursor: default; }
-.cal-day.other-month { opacity: 0.3; }
-.cal-day:not(.empty):hover { border-color: var(--border2); background: var(--bg3); }
-.cal-day.selected { border-color: var(--accent) !important; background: rgba(34,211,122,0.07) !important; }
-.cal-day.today .cal-day-num { color: var(--accent); font-weight: 700; }
-.cal-day-num { font-size: 13px; font-weight: 500; line-height: 1; }
-.cal-day-dot { width: 5px; height: 5px; border-radius: 50%; margin-top: 3px; }
-.cal-day.day-present { background: rgba(34,211,122,0.06); border-color: rgba(34,211,122,0.15); }
-.cal-day.day-absent  { background: rgba(240,78,94,0.05);  border-color: rgba(240,78,94,0.12); }
-.cal-day.day-offwork { background: rgba(77,159,255,0.05); border-color: rgba(77,159,255,0.12); }
-.cal-day.day-weekend { opacity: 0.4; }
-.dot-present-c { background: var(--green); }
-.dot-absent-c  { background: var(--red); }
-.dot-offwork-c { background: var(--amber); }
-.cal-detail { margin-top: 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 18px; }
-.cal-detail-date { font-size: 13px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-.cal-detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap: 8px; }
-.cal-detail-stat { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 9px 12px; }
-.cal-detail-stat-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; }
-.cal-detail-stat-val   { font-size: 15px; font-weight: 700; margin-top: 2px; }
+.calendar-wrap    { margin-bottom:18px; }
+.calendar-nav     { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+.calendar-nav-title { font-size:14px; font-weight:600; flex:1; text-align:center; }
+.cal-nav-btn { width:30px; height:30px; border-radius:8px; border:1px solid var(--border2); background:var(--bg3); color:var(--text2); font-size:16px; display:flex; align-items:center; justify-content:center; transition:all 0.14s; }
+.cal-nav-btn:hover { background:var(--bg4); color:var(--text); }
+.calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+.cal-day-header { text-align:center; font-size:10px; font-weight:600; letter-spacing:0.07em; text-transform:uppercase; color:var(--text3); padding:6px 0; }
+.cal-day { aspect-ratio:1; border-radius:8px; border:1px solid transparent; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; transition:all 0.13s; min-height:44px; }
+.cal-day.empty { cursor:default; }
+.cal-day.other-month { opacity:0.3; }
+.cal-day:not(.empty):hover { border-color:var(--border2); background:var(--bg3); }
+.cal-day.selected { border-color:var(--accent)!important; background:rgba(34,211,122,0.07)!important; }
+.cal-day.today .cal-day-num { color:var(--accent); font-weight:700; }
+.cal-day-num { font-size:13px; font-weight:500; line-height:1; }
+.cal-day-dot { width:5px; height:5px; border-radius:50%; margin-top:3px; }
+.cal-day.day-present { background:rgba(34,211,122,0.06); border-color:rgba(34,211,122,0.15); }
+.cal-day.day-absent  { background:rgba(240,78,94,0.05);  border-color:rgba(240,78,94,0.12); }
+.cal-day.day-offwork { background:rgba(77,159,255,0.05); border-color:rgba(77,159,255,0.12); }
+.cal-day.day-weekend { opacity:0.4; }
+.dot-present-c { background:var(--green); }
+.dot-absent-c  { background:var(--red); }
+.dot-offwork-c { background:var(--amber); }
+.cal-detail { margin-top:14px; background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px 18px; animation:fadeUp 0.18s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+.cal-detail-date  { font-size:13px; font-weight:600; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.cal-detail-grid  { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:8px; }
+.cal-detail-stat  { background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); padding:9px 12px; }
+.cal-detail-stat-label { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:0.07em; }
+.cal-detail-stat-val   { font-size:15px; font-weight:700; margin-top:2px; }
 
-/* ===================== LEGEND ===================== */
-.legend-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; font-size: 11px; color: var(--text3); }
-.legend-item { display: flex; align-items: center; gap: 5px; }
-.legend-dot  { width: 9px; height: 9px; border-radius: 50%; }
-
-/* ===================== SUB TABS ===================== */
-.sub-tab-bar { display: flex; gap: 4px; margin-bottom: 18px; border-bottom: 1px solid var(--border); }
-.sub-tab-btn { padding: 7px 16px; border: none; background: transparent; font-size: 13px; font-weight: 500; color: var(--text3); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.14s; }
-.sub-tab-btn.active { color: var(--text); border-bottom-color: var(--accent); }
-.sub-tab-btn:hover  { color: var(--text2); }
-
-/* ===================== MONTHLY METRICS ===================== */
-.monthly-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap: 10px; margin-bottom: 18px; }
+/* ===================== LEGEND & SUB-TABS ===================== */
+.legend-row  { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:12px; font-size:11px; color:var(--text3); }
+.legend-item { display:flex; align-items:center; gap:5px; }
+.legend-dot  { width:9px; height:9px; border-radius:50%; }
+.sub-tab-bar { display:flex; gap:4px; margin-bottom:18px; border-bottom:1px solid var(--border); }
+.sub-tab-btn { padding:7px 16px; border:none; background:transparent; font-size:13px; font-weight:500; color:var(--text3); border-bottom:2px solid transparent; margin-bottom:-1px; transition:all 0.14s; }
+.sub-tab-btn.active { color:var(--text); border-bottom-color:var(--accent); }
+.sub-tab-btn:hover  { color:var(--text2); }
 
 /* ===================== RESPONSIVE ===================== */
-@media (max-width: 900px) {
-  .sidebar    { width: 220px; }
-  .two-col    { grid-template-columns: 1fr; }
-}
-@media (max-width: 680px) {
-  .sidebar    { display: none; }
-  .main-content { padding: 16px; }
-  .topbar     { padding: 0 16px; }
-}
+@media (max-width:900px) { .sidebar{width:220px;} .two-col{grid-template-columns:1fr;} .offwork-cols{grid-template-columns:1fr;} .offwork-col:first-child{border-right:none;border-bottom:1px solid var(--border);} }
+@media (max-width:680px) { .sidebar{display:none;} .main-content{padding:16px;} .topbar{padding:0 14px;} .tab-pill button{padding:5px 10px;font-size:12px;} }
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-
 const { useState, useEffect, useRef, useCallback, useMemo } = React;
 
+// ===================== i18n =====================
+const I18N = {
+  en: {
+    appTitle:"BOT-MANEMAN",
+    tabDaily:"Daily", tabResults:"Results", tabMonthly:"Monthly",
+    live:"Live", demo:"Demo",
+    settingsTitle:"Settings",
+    darkMode:"Dark mode",
+    language:"Language",
+    apiLabel:"Bot API URL", connectBtn:"Connect →",
+    demoNote:"Demo mode — configure your bot URL above",
+    employees:"Employees",
+    present:"Present", onBreak:"On break", absent:"Absent",
+    updatedAt:"Updated:",
+    workTime:"Work time", sinceArrival:"since arrival",
+    effectiveTime:"Effective time", breaksExcl:"breaks excluded",
+    delay:"Late arrival", overruns:"Overruns",
+    totalBreaks:"Total breaks", today:"today",
+    schedule:"Schedule", arrivalTime:"Arrival time",
+    departureTime:"Departure time", totalAct:"Total activities",
+    earlyDep:"Early departure", netWork:"Net work time", none:"None",
+    breaks:"Breaks", meal:"Meal", short:"Short", long:"Long", smoke:"Smoke",
+    tempDep:"Temporary departures",
+    breakHistory:"Break history",
+    type:"Type", start:"Start", end:"End", duration:"Duration", status:"Status",
+    exceeded:"⚠ Exceeded", ok:"✓ OK",
+    dayResults:"Day results",
+    compliant:"Compliant", violations:"Violations",
+    noCompliant:"No compliant employees yet.",
+    noViolation:"No violations detected.",
+    arrival:"Arrival", departure:"Departure",
+    recapAll:"Today's recap — All employees",
+    employee:"Employee", netWork2:"Net work", overruns2:"Overruns", pauses2:"Breaks",
+    calTitle:"Calendar", chartTitle:"Chart", tableTitle:"Table",
+    daysPresent:"Days present", daysAbsent:"Days absent",
+    delays:"Late arrivals", totalHours:"Total hours",
+    detailTitle:"Daily detail", workingDays:"working days",
+    date:"Date", travelDur:"Duration",
+    noData:"No data recorded for this day.",
+    absentDay:"⛔ Employee was absent this day.",
+    offWorkDone:"✔ Off Work recorded", stillPresent:"● Present",
+    monthlySub:"Monthly tracking · ID",
+    selectEmp:"Select an employee in the sidebar",
+    noEmp:"No active employees",
+    apiErr:"API unreachable",
+    demoSuffix:"Demo data is shown.",
+    hoursWorked:"Hours worked",
+    inProgress:"in progress",
+    elapsed:"Elapsed", limit:"Limit", remaining:"Remaining", overBy:"over",
+    botConnected:"Bot connected — waiting for clock-ins.",
+    botConnectedSub:"Employees will appear here once they press 🟢 Start Work.",
+    connecting:"Connecting to bot API…",
+    months:["January","February","March","April","May","June","July","August","September","October","November","December"],
+    days:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+  },
+  fr: {
+    appTitle:"BOT-MANEMAN",
+    tabDaily:"Quotidien", tabResults:"Résultats", tabMonthly:"Mensuel",
+    live:"En direct", demo:"Démo",
+    settingsTitle:"Paramètres",
+    darkMode:"Mode sombre",
+    language:"Langue",
+    apiLabel:"URL de l'API bot", connectBtn:"Connecter →",
+    demoNote:"Mode démonstration — configurez l'URL ci-dessus",
+    employees:"Employés",
+    present:"Présent", onBreak:"En pause", absent:"Absent",
+    updatedAt:"Mise à jour :",
+    workTime:"Temps de travail", sinceArrival:"depuis l'arrivée",
+    effectiveTime:"Temps effectif", breaksExcl:"pauses exclues",
+    delay:"Retard", overruns:"Dépassements",
+    totalBreaks:"Total pauses", today:"aujourd'hui",
+    schedule:"Horaires", arrivalTime:"Heure d'arrivée",
+    departureTime:"Heure de départ", totalAct:"Activités totales",
+    earlyDep:"Départ anticipé", netWork:"Travail net", none:"Aucun",
+    breaks:"Pauses", meal:"Repas", short:"Courtes", long:"Longues", smoke:"Cigarette",
+    tempDep:"Départs temporaires",
+    breakHistory:"Historique des pauses",
+    type:"Type", start:"Début", end:"Fin", duration:"Durée", status:"Statut",
+    exceeded:"⚠ Dépassé", ok:"✓ OK",
+    dayResults:"Résultats de la journée",
+    compliant:"Conformes", violations:"Infractions",
+    noCompliant:"Aucun employé conforme pour l'instant.",
+    noViolation:"Aucune infraction détectée.",
+    arrival:"Arrivée", departure:"Départ",
+    recapAll:"Récapitulatif du jour — Tous les employés",
+    employee:"Employé", netWork2:"Travail net", overruns2:"Dépassements", pauses2:"Pauses",
+    calTitle:"Calendrier", chartTitle:"Graphique", tableTitle:"Tableau",
+    daysPresent:"Jours présents", daysAbsent:"Jours absents",
+    delays:"Retards", totalHours:"Total heures",
+    detailTitle:"Détail journalier", workingDays:"jours ouvrés",
+    date:"Date", travelDur:"Durée",
+    noData:"Aucune donnée pour cette journée.",
+    absentDay:"⛔ Employé absent ce jour-là.",
+    offWorkDone:"✔ Off Work enregistré", stillPresent:"● Présent",
+    monthlySub:"Suivi mensuel · ID",
+    selectEmp:"Sélectionnez un employé dans la barre latérale",
+    noEmp:"Aucun employé actif",
+    apiErr:"API inaccessible",
+    demoSuffix:"Les données de démonstration sont affichées.",
+    hoursWorked:"Heures travaillées",
+    inProgress:"en cours",
+    elapsed:"Écoulé", limit:"Limite", remaining:"Restant", overBy:"dépassé",
+    botConnected:"Bot connecté — en attente des pointages.",
+    botConnectedSub:"Les employés apparaîtront ici dès qu'ils appuieront sur 🟢 Start Work.",
+    connecting:"Connexion à l'API du bot…",
+    months:["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"],
+    days:["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"],
+  },
+  zh: {
+    appTitle:"BOT-MANEMAN",
+    tabDaily:"每日", tabResults:"结果", tabMonthly:"每月",
+    live:"实时", demo:"演示",
+    settingsTitle:"设置",
+    darkMode:"深色模式",
+    language:"语言",
+    apiLabel:"Bot API 地址", connectBtn:"连接 →",
+    demoNote:"演示模式 — 请在上方配置 URL",
+    employees:"员工",
+    present:"在岗", onBreak:"休息中", absent:"缺勤",
+    updatedAt:"更新时间：",
+    workTime:"工作时间", sinceArrival:"自到达起",
+    effectiveTime:"有效时间", breaksExcl:"不含休息",
+    delay:"迟到", overruns:"超时",
+    totalBreaks:"休息总计", today:"今日",
+    schedule:"时间表", arrivalTime:"到达时间",
+    departureTime:"离开时间", totalAct:"总活动",
+    earlyDep:"提前离开", netWork:"净工作时间", none:"无",
+    breaks:"休息", meal:"用餐", short:"短暂", long:"较长", smoke:"吸烟",
+    tempDep:"临时离开",
+    breakHistory:"休息记录",
+    type:"类型", start:"开始", end:"结束", duration:"时长", status:"状态",
+    exceeded:"⚠ 超时", ok:"✓ 正常",
+    dayResults:"当日结果",
+    compliant:"合规", violations:"违规",
+    noCompliant:"暂无合规员工。",
+    noViolation:"未检测到违规。",
+    arrival:"到达", departure:"离开",
+    recapAll:"今日汇总 — 所有员工",
+    employee:"员工", netWork2:"净工作", overruns2:"超时", pauses2:"休息",
+    calTitle:"日历", chartTitle:"图表", tableTitle:"列表",
+    daysPresent:"出勤天数", daysAbsent:"缺勤天数",
+    delays:"迟到次数", totalHours:"总小时数",
+    detailTitle:"每日明细", workingDays:"工作日",
+    date:"日期", travelDur:"时长",
+    noData:"该日无记录。",
+    absentDay:"⛔ 该员工当日缺勤。",
+    offWorkDone:"✔ 已记录下班", stillPresent:"● 在岗",
+    monthlySub:"月度跟踪 · ID",
+    selectEmp:"请在侧边栏选择员工",
+    noEmp:"无在岗员工",
+    apiErr:"无法访问 API",
+    demoSuffix:"正在显示演示数据。",
+    hoursWorked:"工作小时",
+    inProgress:"进行中",
+    elapsed:"已用", limit:"限制", remaining:"剩余", overBy:"超出",
+    botConnected:"Bot 已连接 — 等待打卡。",
+    botConnectedSub:"员工按下 🟢 Start Work 后将显示在此处。",
+    connecting:"正在连接 Bot API…",
+    months:["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"],
+    days:["周一","周二","周三","周四","周五","周六","周日"],
+  }
+};
+
 // ===================== UTILS =====================
-function fmtSec(totalSec) {
-  if (!totalSec || totalSec <= 0) return "0min";
-  const s = Math.round(totalSec);
-  const h = Math.floor(s / 3600);
-  const m = Math.floor((s % 3600) / 60);
-  const sc = s % 60;
-  if (h > 0) return `${h}h${String(m).padStart(2,'0')}min`;
-  if (m > 0 && sc > 0) return `${m}min ${sc}s`;
-  if (m > 0) return `${m}min`;
-  return `${sc}s`;
+function fmtSec(s){
+  if(!s||s<=0)return"0min";
+  s=Math.round(s);
+  const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=s%60;
+  if(h>0)return`${h}h${String(m).padStart(2,'0')}min`;
+  if(m>0&&sc>0)return`${m}min ${sc}s`;
+  if(m>0)return`${m}min`;
+  return`${sc}s`;
 }
-
-function fmtHM(totalSec) {
-  if (!totalSec || totalSec <= 0) return "0h00";
-  const h = Math.floor(totalSec / 3600);
-  const m = Math.floor((totalSec % 3600) / 60);
-  return `${h}h${String(m).padStart(2,'0')}`;
+function fmtHM(s){
+  if(!s||s<=0)return"0h00";
+  return`${Math.floor(s/3600)}h${String(Math.floor((s%3600)/60)).padStart(2,'0')}`;
 }
+function initials(n){if(!n)return"?";return n.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();}
+function padZ(n){return String(n).padStart(2,'0');}
 
-function initials(name) {
-  if (!name) return "?";
-  return name.split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase();
-}
-
-const AVATAR_COLORS = [
-  { bg: "rgba(34,211,122,0.15)",  color: "#22d37a" },
-  { bg: "rgba(77,159,255,0.15)",  color: "#4d9fff" },
-  { bg: "rgba(167,139,250,0.15)", color: "#a78bfa" },
-  { bg: "rgba(245,166,35,0.15)",  color: "#f5a623" },
-  { bg: "rgba(240,78,94,0.15)",   color: "#f04e5e" },
+const AVATAR_COLORS=[
+  {bg:"rgba(34,211,122,0.15)",color:"#22d37a"},
+  {bg:"rgba(77,159,255,0.15)",color:"#4d9fff"},
+  {bg:"rgba(167,139,250,0.15)",color:"#a78bfa"},
+  {bg:"rgba(245,166,35,0.15)",color:"#f5a623"},
+  {bg:"rgba(240,78,94,0.15)",color:"#f04e5e"},
 ];
-function avatarColor(index) { return AVATAR_COLORS[index % AVATAR_COLORS.length]; }
+function avatarColor(i){return AVATAR_COLORS[i%AVATAR_COLORS.length];}
 
-const BREAK_LABELS = {
-  BREAK_FOOD:         { label: "Repas",        emoji: "🍽", color: "amber" },
-  BREAK_TOILET_SMALL: { label: "Pause courte",  emoji: "🚻", color: "blue"  },
-  BREAK_TOILET_BIG:   { label: "Pause longue",  emoji: "🚽", color: "purple"},
-  BREAK_SMOKE:        { label: "Cigarette",     emoji: "🚬", color: "red"   },
+const BREAK_TYPES={
+  BREAK_FOOD:{emoji:"🍽",key:"meal"},
+  BREAK_TOILET_SMALL:{emoji:"🚻",key:"short"},
+  BREAK_TOILET_BIG:{emoji:"🚽",key:"long"},
+  BREAK_SMOKE:{emoji:"🚬",key:"smoke"},
 };
 
 // ===================== DEMO DATA =====================
-function makeDemoData() {
-  const now = new Date();
-  const hhmm = t => t.toTimeString().slice(0,5);
-  const workStart = new Date(now); workStart.setHours(8,2,0,0);
-  const elapsed   = (now - workStart) / 1000;
-
-  return {
-    timestamp: now.toISOString(),
-    date: now.toISOString().slice(0,10),
-    employes: [
-      {
-        user_id: 101, nom: "Rakoto Jean", username: "rakoto_j", statut: "present",
-        heure_arrivee: "08:02", heure_depart: "--:--",
-        retard_min: 2, depart_anticipe_min: 0,
-        temps_travail_sec: elapsed, temps_effectif_sec: elapsed - 3780,
-        pauses_total_sec: 3780, depassements_sec: 240,
-        pause_repas:      { count: 1, duree_sec: 2400 },
-        pauses_courtes:   { count: 3, duree_sec: 630  },
-        pauses_longues:   { count: 0, duree_sec: 0    },
-        pauses_cigarette: { count: 4, duree_sec: 750  },
-        departs_temporaires: { count: 4, duree_sec: 3780 },
-        activites_total_sec: elapsed,
-        pause_courante: null,
-        sessions: [
-          { type:"BREAK_FOOD",         label:"Eat",          start:"09:15:00", end:"10:00:00", duration:2700, exceeded:true  },
-          { type:"BREAK_TOILET_SMALL", label:"Small toilet", start:"10:45:00", end:"10:52:00", duration:420,  exceeded:false },
-          { type:"BREAK_SMOKE",        label:"Smoke",        start:"11:30:00", end:"11:37:30", duration:450,  exceeded:true  },
-          { type:"BREAK_TOILET_SMALL", label:"Small toilet", start:"13:10:00", end:"13:14:00", duration:240,  exceeded:false },
-        ],
-        last_update: hhmm(now)
-      },
-      {
-        user_id: 102, nom: "Rabe Miora", username: "rabe_m", statut: "absent",
-        heure_arrivee: "--:--", heure_depart: "--:--",
-        retard_min: 0, depart_anticipe_min: 0,
-        temps_travail_sec: 0, temps_effectif_sec: 0,
-        pauses_total_sec: 0, depassements_sec: 0,
-        pause_repas: {count:0,duree_sec:0}, pauses_courtes:{count:0,duree_sec:0},
-        pauses_longues:{count:0,duree_sec:0}, pauses_cigarette:{count:0,duree_sec:0},
-        departs_temporaires:{count:0,duree_sec:0}, activites_total_sec:0,
-        pause_courante: null, sessions: [], last_update: hhmm(now)
-      },
-      {
-        user_id: 103, nom: "Andry Harison", username: "andry_h", statut: "pause",
-        heure_arrivee: "07:55", heure_depart: "--:--",
-        retard_min: 0, depart_anticipe_min: 0,
-        temps_travail_sec: elapsed + 420,
-        temps_effectif_sec: elapsed + 420 - 2760,
-        pauses_total_sec: 2760, depassements_sec: 0,
-        pause_repas:      { count: 1, duree_sec: 1800 },
-        pauses_courtes:   { count: 2, duree_sec: 720  },
-        pauses_longues:   { count: 1, duree_sec: 240  },
-        pauses_cigarette: { count: 2, duree_sec: 480  },
-        departs_temporaires:{count:3,duree_sec:2760}, activites_total_sec:elapsed+420,
-        pause_courante: {
-          type:"BREAK_TOILET_SMALL", label:"Small toilet",
-          elapsed: 180, limit: 420, exceeded: false
-        },
-        sessions: [
-          { type:"BREAK_FOOD",         label:"Eat",          start:"12:00:00", end:"12:30:00", duration:1800, exceeded:false },
-          { type:"BREAK_TOILET_SMALL", label:"Small toilet", start:"10:20:00", end:"10:32:00", duration:720,  exceeded:false },
-          { type:"BREAK_SMOKE",        label:"Smoke",        start:"11:00:00", end:"11:08:00", duration:480,  exceeded:true  },
-        ],
-        last_update: hhmm(now)
-      }
+function makeDemoData(){
+  const now=new Date();
+  const hhmm=t=>t.toTimeString().slice(0,5);
+  const ws=new Date(now);ws.setHours(8,2,0,0);
+  const el=(now-ws)/1000;
+  return{
+    timestamp:now.toISOString(),date:now.toISOString().slice(0,10),
+    employes:[
+      {user_id:101,nom:"Rakoto Jean",username:"rakoto_j",statut:"present",
+       heure_arrivee:"08:02",heure_depart:"--:--",retard_min:2,depart_anticipe_min:0,
+       temps_travail_sec:el,temps_effectif_sec:el-3780,pauses_total_sec:3780,depassements_sec:240,
+       pause_repas:{count:1,duree_sec:2400},pauses_courtes:{count:3,duree_sec:630},
+       pauses_longues:{count:0,duree_sec:0},pauses_cigarette:{count:4,duree_sec:750},
+       departs_temporaires:{count:4,duree_sec:3780},activites_total_sec:el,pause_courante:null,
+       sessions:[
+         {type:"BREAK_FOOD",start:"09:15:00",end:"10:00:00",duration:2700,exceeded:true},
+         {type:"BREAK_TOILET_SMALL",start:"10:45:00",end:"10:52:00",duration:420,exceeded:false},
+         {type:"BREAK_SMOKE",start:"11:30:00",end:"11:37:30",duration:450,exceeded:true},
+         {type:"BREAK_TOILET_SMALL",start:"13:10:00",end:"13:14:00",duration:240,exceeded:false},
+       ],last_update:hhmm(now)},
+      {user_id:102,nom:"Rabe Miora",username:"rabe_m",statut:"absent",
+       heure_arrivee:"--:--",heure_depart:"--:--",retard_min:0,depart_anticipe_min:0,
+       temps_travail_sec:0,temps_effectif_sec:0,pauses_total_sec:0,depassements_sec:0,
+       pause_repas:{count:0,duree_sec:0},pauses_courtes:{count:0,duree_sec:0},
+       pauses_longues:{count:0,duree_sec:0},pauses_cigarette:{count:0,duree_sec:0},
+       departs_temporaires:{count:0,duree_sec:0},activites_total_sec:0,
+       pause_courante:null,sessions:[],last_update:hhmm(now)},
+      {user_id:103,nom:"Andry Harison",username:"andry_h",statut:"pause",
+       heure_arrivee:"07:55",heure_depart:"--:--",retard_min:0,depart_anticipe_min:0,
+       temps_travail_sec:el+420,temps_effectif_sec:el+420-2760,pauses_total_sec:2760,depassements_sec:0,
+       pause_repas:{count:1,duree_sec:1800},pauses_courtes:{count:2,duree_sec:720},
+       pauses_longues:{count:1,duree_sec:240},pauses_cigarette:{count:2,duree_sec:480},
+       departs_temporaires:{count:3,duree_sec:2760},activites_total_sec:el+420,
+       pause_courante:{type:"BREAK_TOILET_SMALL",elapsed:180,limit:420,exceeded:false},
+       sessions:[
+         {type:"BREAK_FOOD",start:"12:00:00",end:"12:30:00",duration:1800,exceeded:false},
+         {type:"BREAK_TOILET_SMALL",start:"10:20:00",end:"10:32:00",duration:720,exceeded:false},
+         {type:"BREAK_SMOKE",start:"11:00:00",end:"11:08:00",duration:480,exceeded:true},
+       ],last_update:hhmm(now)},
     ]
   };
 }
 
-const DEMO_MONTHLY = (() => {
-  const rows = [];
-  const labels = ["01","02","03","04","05","06","07","08","09","10",
-                   "11","12","13","14","15","16","17","18","19","20"];
-  const presences = [1,1,0,1,1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1];
-  const hours =     [8.2,8.4,0,7.8,8.9,8.3,7.7,0,8.0,8.6,8.1,0,8.5,8.2,7.9,8.4,0,8.7,8.0,8.3];
-  const delays =    [2,0,0,10,0,0,30,0,5,0,0,0,0,8,0,0,0,3,0,0];
-  for (let i=0;i<labels.length;i++) {
-    rows.push({
-      date: `${labels[i]}/05`,
-      arrivee: presences[i] ? `0${7 + Math.floor(Math.random()*1)}:${String(Math.floor(Math.random()*60)).padStart(2,'0')}` : "--:--",
-      depart:  presences[i] ? "19:00" : "--:--",
-      travail: fmtHM(hours[i]*3600),
-      heures:  hours[i],
-      retard:  delays[i],
-      statut:  presences[i] ? "present" : "absent"
-    });
+function makeDemoHistory(userId){
+  const today=new Date();
+  const year=today.getFullYear(),month=today.getMonth();
+  const days=new Date(year,month+1,0).getDate();
+  const h={};
+  for(let d=1;d<=days;d++){
+    const dt=new Date(year,month,d);
+    if(dt>today)break;
+    const dow=dt.getDay();
+    if(dow===0||dow===6)continue;
+    const seed=(userId*13+d*7)%100;
+    const k=`${year}-${padZ(month+1)}-${padZ(d)}`;
+    if(seed<12){h[k]={statut:"absent"};}
+    else{
+      const rm=seed<25?Math.floor((seed%5)*3+1):0;
+      const ds=seed>70?(seed%3+1)*120:0;
+      const done=dt.getDate()<today.getDate();
+      h[k]={statut:done?"offwork":"present",
+             heure_arrivee:rm>0?`07:${padZ(40+rm)}`:"07:38",
+             heure_depart:done?"18:27":"--:--",
+             retard_min:rm,depassements_sec:ds,
+             temps_effectif_sec:Math.max(0,38700-ds-rm*60)};
+    }
   }
-  return rows;
-})();
-
-// ===================== COMPONENTS =====================
-
-function StatusBadge({ statut }) {
-  if (statut === "present") return <span className="status-badge badge-present">● Présent</span>;
-  if (statut === "pause")   return <span className="status-badge badge-pause">◐ En pause</span>;
-  return <span className="status-badge badge-absent">○ Absent</span>;
+  return h;
 }
 
-function BreakBanner({ pause_courante }) {
-  const [tick, setTick] = useState(0);
-  useEffect(() => {
-    const id = setInterval(() => setTick(t => t+1), 1000);
-    return () => clearInterval(id);
-  }, []);
+// ===================== COMPONENTS =====================
+function StatusBadge({statut,t}){
+  if(statut==="present")return<span className="status-badge badge-present">● {t.present}</span>;
+  if(statut==="pause")  return<span className="status-badge badge-pause">◐ {t.onBreak}</span>;
+  return<span className="status-badge badge-absent">○ {t.absent}</span>;
+}
 
-  if (!pause_courante) return null;
-  const { type, elapsed, limit, exceeded } = pause_courante;
-  const info  = BREAK_LABELS[type] || { label: "Pause", emoji: "⏸" };
-  const live  = elapsed + tick;
-  const over  = live - limit;
-
-  return (
+function BreakBanner({pause_courante,t}){
+  const[tick,setTick]=useState(0);
+  useEffect(()=>{const id=setInterval(()=>setTick(x=>x+1),1000);return()=>clearInterval(id);},[]);
+  if(!pause_courante)return null;
+  const{type,elapsed,limit,exceeded}=pause_courante;
+  const info=BREAK_TYPES[type]||{emoji:"⏸",key:"short"};
+  const live=elapsed+tick,over=live-limit;
+  return(
     <div className="break-banner">
       <div className="break-banner-left">
         <div className="break-banner-emoji">{info.emoji}</div>
         <div>
-          <div className="break-banner-label">{info.label} en cours</div>
-          <div className="break-banner-since">Écoulé : {fmtSec(live)} / Limite : {fmtSec(limit)}</div>
+          <div className="break-banner-label">{t[info.key]} {t.inProgress}</div>
+          <div className="break-banner-since">{t.elapsed}: {fmtSec(live)} / {t.limit}: {fmtSec(limit)}</div>
         </div>
       </div>
       <div className="break-banner-right">
-        {exceeded || over > 0
-          ? <span className="overdue">⚠ +{fmtSec(Math.max(over,0))} dépassé</span>
-          : <span>Restant : {fmtSec(Math.max(limit-live,0))}</span>
-        }
+        {exceeded||over>0
+          ?<span className="overdue">⚠ +{fmtSec(Math.max(over,0))} {t.overBy}</span>
+          :<span>{t.remaining}: {fmtSec(Math.max(limit-live,0))}</span>}
       </div>
     </div>
   );
 }
 
-function DailyView({ emp, colorIdx }) {
-  const ac = avatarColor(colorIdx);
-  const retardStr     = emp.retard_min > 0 ? `+${emp.retard_min} min` : "Aucun";
-  const anticipeStr   = emp.depart_anticipe_min > 0 ? `-${emp.depart_anticipe_min} min` : "Aucun";
-  const depassStr     = emp.depassements_sec > 0 ? fmtSec(emp.depassements_sec) : "Aucun";
-
-  return (
+function DailyView({emp,colorIdx,t}){
+  const ac=avatarColor(colorIdx);
+  const retardStr=emp.retard_min>0?`+${emp.retard_min} min`:t.none;
+  const anticStr=emp.depart_anticipe_min>0?`-${emp.depart_anticipe_min} min`:t.none;
+  const depassStr=emp.depassements_sec>0?fmtSec(emp.depassements_sec):t.none;
+  return(
     <div>
-      {/* Profile */}
       <div className="profile-header">
         <div className="profile-left">
-          <div className="profile-avatar" style={{ background: ac.bg, color: ac.color }}>
-            {initials(emp.nom)}
-          </div>
+          <div className="profile-avatar" style={{background:ac.bg,color:ac.color}}>{initials(emp.nom)}</div>
           <div>
             <div className="profile-name">{emp.nom}</div>
-            <div className="profile-uid">ID: {emp.user_id} {emp.username !== "N/A" ? `· @${emp.username}` : ""}</div>
+            <div className="profile-uid">ID: {emp.user_id}{emp.username!=="N/A"?` · @${emp.username}`:""}</div>
           </div>
         </div>
         <div className="profile-right">
-          <StatusBadge statut={emp.statut} />
-          <div className="last-update">Mise à jour : {emp.last_update}</div>
+          <StatusBadge statut={emp.statut} t={t}/>
+          <div className="last-update">{t.updatedAt} {emp.last_update}</div>
         </div>
       </div>
-
-      {/* Active break banner */}
-      {emp.pause_courante && <BreakBanner pause_courante={emp.pause_courante} />}
-
-      {/* Key metrics */}
+      {emp.pause_courante&&<BreakBanner pause_courante={emp.pause_courante} t={t}/>}
       <div className="metrics-grid">
-        <div className="metric-card green">
-          <div className="metric-label">Temps de travail</div>
-          <div className="metric-value green">{fmtHM(emp.temps_travail_sec)}</div>
-          <div className="metric-sub">depuis l'arrivée</div>
-        </div>
-        <div className="metric-card blue">
-          <div className="metric-label">Temps effectif</div>
-          <div className="metric-value blue">{fmtHM(emp.temps_effectif_sec)}</div>
-          <div className="metric-sub">pauses exclues</div>
-        </div>
-        <div className={`metric-card ${emp.retard_min > 0 ? 'red' : 'green'}`}>
-          <div className="metric-label">Retard</div>
-          <div className={`metric-value ${emp.retard_min > 0 ? 'red' : 'green'}`}>{retardStr}</div>
-        </div>
-        <div className={`metric-card ${emp.depassements_sec > 0 ? 'amber' : 'green'}`}>
-          <div className="metric-label">Dépassements</div>
-          <div className={`metric-value ${emp.depassements_sec > 0 ? 'amber' : 'green'}`}>{depassStr}</div>
-        </div>
-        <div className="metric-card purple">
-          <div className="metric-label">Tps travail total</div>
-          <div className="metric-value purple">{fmtHM(emp.temps_effectif_sec)}</div>
-          <div className="metric-sub">net (sans pauses)</div>
-        </div>
+        <div className="metric-card green"><div className="metric-label">{t.workTime}</div><div className="metric-value green">{fmtHM(emp.temps_travail_sec)}</div><div className="metric-sub">{t.sinceArrival}</div></div>
+        <div className="metric-card blue"><div className="metric-label">{t.effectiveTime}</div><div className="metric-value blue">{fmtHM(emp.temps_effectif_sec)}</div><div className="metric-sub">{t.breaksExcl}</div></div>
+        <div className={`metric-card ${emp.retard_min>0?'red':'green'}`}><div className="metric-label">{t.delay}</div><div className={`metric-value ${emp.retard_min>0?'red':'green'}`}>{retardStr}</div></div>
+        <div className={`metric-card ${emp.depassements_sec>0?'amber':'green'}`}><div className="metric-label">{t.overruns}</div><div className={`metric-value ${emp.depassements_sec>0?'amber':'green'}`}>{depassStr}</div></div>
+        <div className="metric-card purple"><div className="metric-label">{t.totalBreaks}</div><div className="metric-value purple">{fmtHM(emp.pauses_total_sec)}</div><div className="metric-sub">{t.today}</div></div>
       </div>
-
-      {/* Horaires + Pauses */}
       <div className="two-col">
         <div className="info-card">
-          <div className="info-card-title">Horaires</div>
-          <div className="info-row">
-            <span className="info-row-label"><span className="info-row-icon">🚀</span>Heure d'arrivée</span>
-            <span className="info-row-val">{emp.heure_arrivee}</span>
-          </div>
-          <div className="info-row">
-            <span className="info-row-label"><span className="info-row-icon">🏁</span>Heure de départ</span>
-            <span className="info-row-val">{emp.heure_depart}</span>
-          </div>
-          <div className="info-row">
-            <span className="info-row-label"><span className="info-row-icon">⏱</span>Activités totales</span>
-            <span className="info-row-val">{fmtHM(emp.activites_total_sec)}</span>
-          </div>
-          <div className="info-row">
-            <span className="info-row-label"><span className="info-row-icon">⚠️</span>Retard</span>
-            <span className={`info-row-val ${emp.retard_min > 0 ? 'val-red' : 'val-green'}`}>{retardStr}</span>
-          </div>
-          <div className="info-row">
-            <span className="info-row-label"><span className="info-row-icon">🔚</span>Départ anticipé</span>
-            <span className={`info-row-val ${emp.depart_anticipe_min > 0 ? 'val-amber' : 'val-green'}`}>{anticipeStr}</span>
-          </div>
-          <div className="info-row">
-            <span className="info-row-label"><span className="info-row-icon">⏰</span>Dépassements</span>
-            <span className={`info-row-val ${emp.depassements_sec > 0 ? 'val-red' : 'val-green'}`}>{depassStr}</span>
-          </div>
-          <div className="info-row">
-            <span className="info-row-label"><span className="info-row-icon">💼</span>Travail total</span>
-            <span className="info-row-val val-green">{fmtHM(emp.temps_effectif_sec)}</span>
-          </div>
+          <div className="info-card-title">{t.schedule}</div>
+          <div className="info-row"><span className="info-row-label"><span className="info-row-icon">🚀</span>{t.arrivalTime}</span><span className="info-row-val">{emp.heure_arrivee}</span></div>
+          <div className="info-row"><span className="info-row-label"><span className="info-row-icon">🏁</span>{t.departureTime}</span><span className="info-row-val">{emp.heure_depart}</span></div>
+          <div className="info-row"><span className="info-row-label"><span className="info-row-icon">⏱</span>{t.totalAct}</span><span className="info-row-val">{fmtHM(emp.activites_total_sec)}</span></div>
+          <div className="info-row"><span className="info-row-label"><span className="info-row-icon">⚠️</span>{t.delay}</span><span className={`info-row-val ${emp.retard_min>0?'val-red':'val-green'}`}>{retardStr}</span></div>
+          <div className="info-row"><span className="info-row-label"><span className="info-row-icon">🔚</span>{t.earlyDep}</span><span className={`info-row-val ${emp.depart_anticipe_min>0?'val-amber':'val-green'}`}>{anticStr}</span></div>
+          <div className="info-row"><span className="info-row-label"><span className="info-row-icon">⏰</span>{t.overruns}</span><span className={`info-row-val ${emp.depassements_sec>0?'val-red':'val-green'}`}>{depassStr}</span></div>
+          <div className="info-row"><span className="info-row-label"><span className="info-row-icon">💼</span>{t.netWork}</span><span className="info-row-val val-green">{fmtHM(emp.temps_effectif_sec)}</span></div>
         </div>
-
         <div className="info-card">
-          <div className="info-card-title">Pauses</div>
+          <div className="info-card-title">{t.breaks}</div>
           <div className="pause-grid">
-            <div className="pause-item">
-              <div className="pause-item-header"><span className="pause-item-emoji">🍽</span>Repas</div>
-              <div className="pause-count">{emp.pause_repas.count}<span style={{fontSize:12,fontWeight:400,color:'var(--text3)'}}>×</span></div>
-              <div className="pause-dur">{fmtSec(emp.pause_repas.duree_sec)} total</div>
-            </div>
-            <div className="pause-item">
-              <div className="pause-item-header"><span className="pause-item-emoji">🚻</span>Courtes</div>
-              <div className="pause-count">{emp.pauses_courtes.count}<span style={{fontSize:12,fontWeight:400,color:'var(--text3)'}}>×</span></div>
-              <div className="pause-dur">{fmtSec(emp.pauses_courtes.duree_sec)} total</div>
-            </div>
-            <div className="pause-item">
-              <div className="pause-item-header"><span className="pause-item-emoji">🚽</span>Longues</div>
-              <div className="pause-count">{emp.pauses_longues.count}<span style={{fontSize:12,fontWeight:400,color:'var(--text3)'}}>×</span></div>
-              <div className="pause-dur">{fmtSec(emp.pauses_longues.duree_sec)} total</div>
-            </div>
-            <div className="pause-item">
-              <div className="pause-item-header"><span className="pause-item-emoji">🚬</span>Cigarette</div>
-              <div className="pause-count">{emp.pauses_cigarette.count}<span style={{fontSize:12,fontWeight:400,color:'var(--text3)'}}>×</span></div>
-              <div className="pause-dur">{fmtSec(emp.pauses_cigarette.duree_sec)} total</div>
-            </div>
+            <div className="pause-item"><div className="pause-item-header"><span className="pause-item-emoji">🍽</span>{t.meal}</div><div className="pause-count">{emp.pause_repas.count}<span style={{fontSize:12,fontWeight:400,color:'var(--text3)'}}>×</span></div><div className="pause-dur">{fmtSec(emp.pause_repas.duree_sec)}</div></div>
+            <div className="pause-item"><div className="pause-item-header"><span className="pause-item-emoji">🚻</span>{t.short}</div><div className="pause-count">{emp.pauses_courtes.count}<span style={{fontSize:12,fontWeight:400,color:'var(--text3)'}}>×</span></div><div className="pause-dur">{fmtSec(emp.pauses_courtes.duree_sec)}</div></div>
+            <div className="pause-item"><div className="pause-item-header"><span className="pause-item-emoji">🚽</span>{t.long}</div><div className="pause-count">{emp.pauses_longues.count}<span style={{fontSize:12,fontWeight:400,color:'var(--text3)'}}>×</span></div><div className="pause-dur">{fmtSec(emp.pauses_longues.duree_sec)}</div></div>
+            <div className="pause-item"><div className="pause-item-header"><span className="pause-item-emoji">🚬</span>{t.smoke}</div><div className="pause-count">{emp.pauses_cigarette.count}<span style={{fontSize:12,fontWeight:400,color:'var(--text3)'}}>×</span></div><div className="pause-dur">{fmtSec(emp.pauses_cigarette.duree_sec)}</div></div>
           </div>
-          <div className="info-row">
-            <span className="info-row-label"><span className="info-row-icon">🚶</span>Départs temporaires</span>
-            <span className="info-row-val">{emp.departs_temporaires.count}× · {fmtSec(emp.departs_temporaires.duree_sec)}</span>
-          </div>
-          <div className="info-row">
-            <span className="info-row-label"><span className="info-row-icon">☕</span>Total pauses</span>
-            <span className="info-row-val val-amber">{fmtHM(emp.pauses_total_sec)}</span>
-          </div>
+          <div className="info-row"><span className="info-row-label"><span className="info-row-icon">🚶</span>{t.tempDep}</span><span className="info-row-val">{emp.departs_temporaires.count}× · {fmtSec(emp.departs_temporaires.duree_sec)}</span></div>
+          <div className="info-row"><span className="info-row-label"><span className="info-row-icon">☕</span>{t.totalBreaks}</span><span className="info-row-val val-amber">{fmtHM(emp.pauses_total_sec)}</span></div>
         </div>
       </div>
-
-      {/* Sessions */}
-      {emp.sessions && emp.sessions.length > 0 && (
+      {emp.sessions&&emp.sessions.length>0&&(
         <div className="info-card">
-          <div className="info-card-title">Historique des pauses</div>
+          <div className="info-card-title">{t.breakHistory}</div>
           <table className="sessions-table">
-            <thead>
-              <tr>
-                <th>Type</th><th>Début</th><th>Fin</th><th>Durée</th><th>Statut</th>
-              </tr>
-            </thead>
+            <thead><tr><th>{t.type}</th><th>{t.start}</th><th>{t.end}</th><th>{t.duration}</th><th>{t.status}</th></tr></thead>
             <tbody>
-              {emp.sessions.map((s, i) => {
-                const info = BREAK_LABELS[s.type] || { emoji:"⏸", label: s.label };
-                return (
+              {emp.sessions.map((s,i)=>{
+                const info=BREAK_TYPES[s.type]||{emoji:"⏸",key:"short"};
+                return(
                   <tr key={i}>
-                    <td>{info.emoji} {info.label || s.label}</td>
+                    <td>{info.emoji} {t[info.key]}</td>
                     <td style={{fontFamily:'monospace'}}>{s.start}</td>
                     <td style={{fontFamily:'monospace'}}>{s.end}</td>
                     <td>{fmtSec(s.duration)}</td>
-                    <td>{s.exceeded
-                      ? <span className="exceeded-pill">⚠ Dépassé</span>
-                      : <span className="ok-pill">✓ OK</span>}
-                    </td>
+                    <td>{s.exceeded?<span className="exceeded-pill">{t.exceeded}</span>:<span className="ok-pill">{t.ok}</span>}</td>
                   </tr>
                 );
               })}
@@ -795,105 +747,31 @@ function DailyView({ emp, colorIdx }) {
   );
 }
 
-// ===================== UTILS CALENDAR =====================
-function padZ(n) { return String(n).padStart(2,'0'); }
-const MONTHS_FR = ["Janvier","Février","Mars","Avril","Mai","Juin",
-                   "Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
-const DAYS_FR = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
-
-// ===================== DEMO HISTORY (par employé) =====================
-function makeDemoHistory(userId) {
-  const today = new Date();
-  const year  = today.getFullYear();
-  const month = today.getMonth();
-  const days  = new Date(year, month+1, 0).getDate();
-  const history = {};
-  for (let d = 1; d <= days; d++) {
-    const dt = new Date(year, month, d);
-    if (dt > today) break;
-    const dow = dt.getDay();
-    if (dow === 0 || dow === 6) continue;
-    const seed = (userId * 13 + d * 7) % 100;
-    const absent = seed < 12;
-    if (absent) {
-      history[`${year}-${padZ(month+1)}-${padZ(d)}`] = { statut: "absent" };
-    } else {
-      const retardMin = seed < 25 ? Math.floor((seed % 5) * 3 + 1) : 0;
-      const depassSec = seed > 70 ? (seed % 3 + 1) * 120 : 0;
-      const offWorkDone = dt.getDate() < today.getDate() || (dt.getDate() === today.getDate() && today.getHours() >= 18);
-      history[`${year}-${padZ(month+1)}-${padZ(d)}`] = {
-        statut:            offWorkDone ? "offwork" : "present",
-        heure_arrivee:     retardMin > 0 ? `07:${padZ(40+retardMin)}` : "07:38",
-        heure_depart:      offWorkDone ? "18:27" : "--:--",
-        retard_min:        retardMin,
-        depassements_sec:  depassSec,
-        temps_effectif_sec: Math.max(0, 38700 - depassSec - retardMin * 60),
-      };
-    }
-  }
-  return history;
-}
-
-// ===================== MONTHLY CHART =====================
-function MonthlyChart({ data }) {
-  const ref = useRef(null);
-  const chartRef = useRef(null);
-  useEffect(() => {
-    if (!ref.current) return;
-    if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; }
-    const labels = data.map(r => r.date);
-    const vals   = data.map(r => r.heures);
-    const colors = data.map(r => r.statut === "present" || r.statut === "offwork"
-      ? "rgba(34,211,122,0.65)" : "rgba(240,78,94,0.35)");
-    chartRef.current = new Chart(ref.current, {
-      type: "bar",
-      data: { labels, datasets: [{ label:"Heures", data:vals, backgroundColor:colors, borderRadius:4, borderSkipped:false }] },
-      options: {
-        responsive:true, maintainAspectRatio:false,
-        plugins: { legend:{display:false}, tooltip:{callbacks:{label:c=>`${c.raw}h`}} },
-        scales: {
-          x: { grid:{display:false}, ticks:{color:"#555b6e",font:{size:10}} },
-          y: { min:0, max:12, ticks:{color:"#555b6e",font:{size:10},callback:v=>`${v}h`}, grid:{color:"rgba(255,255,255,0.04)"} }
-        }
-      }
-    });
-    return () => { if(chartRef.current) chartRef.current.destroy(); };
-  }, [data]);
-  return <canvas ref={ref} aria-label="Graphique des heures de travail journalières" />;
-}
-
-// ===================== OFF WORK SUMMARY PANEL =====================
-function OffWorkPanel({ employes, colorMap }) {
-  const today = new Date().toLocaleDateString('fr-FR', { day:'2-digit', month:'long', year:'numeric' });
-  const done   = employes.filter(e => e.heure_depart && e.heure_depart !== "--:--");
-  const active = employes.filter(e => !e.heure_depart || e.heure_depart === "--:--");
-  const conformes   = done.filter(e => e.retard_min === 0 && e.depassements_sec === 0);
-  const infractions = done.filter(e => e.retard_min > 0 || e.depassements_sec > 0);
-  const activesAlert = active.filter(e => e.retard_min > 0 || e.depassements_sec > 0);
-  const allOk    = conformes;
-  const allAlert = [...infractions, ...activesAlert];
-  return (
+function OffWorkPanel({employes,colorMap,t}){
+  const today=new Date().toLocaleDateString(undefined,{day:'2-digit',month:'long',year:'numeric'});
+  const done=employes.filter(e=>e.heure_depart&&e.heure_depart!=="--:--");
+  const active=employes.filter(e=>!e.heure_depart||e.heure_depart==="--:--");
+  const allOk=[...done.filter(e=>e.retard_min===0&&e.depassements_sec===0)];
+  const allAlert=[...done.filter(e=>e.retard_min>0||e.depassements_sec>0),...active.filter(e=>e.retard_min>0||e.depassements_sec>0)];
+  return(
     <div className="offwork-panel">
       <div className="offwork-panel-header">
         <span style={{fontSize:16}}>📋</span>
-        <span className="offwork-panel-title">Résultats de la journée</span>
+        <span className="offwork-panel-title">{t.dayResults}</span>
         <span className="offwork-panel-date">{today}</span>
       </div>
       <div className="offwork-cols">
         <div className="offwork-col">
-          <div className="offwork-col-title col-ok"><span>✅</span> Conformes ({allOk.length})</div>
-          {allOk.length === 0 && <div className="offwork-empty">Aucun employé conforme pour l'instant.</div>}
-          {allOk.map((e) => {
-            const ac = colorMap[e.user_id] || avatarColor(0);
-            return (
+          <div className="offwork-col-title col-ok">✅ {t.compliant} ({allOk.length})</div>
+          {allOk.length===0&&<div className="offwork-empty">{t.noCompliant}</div>}
+          {allOk.map(e=>{
+            const ac=colorMap[e.user_id]||avatarColor(0);
+            return(
               <div key={e.user_id} className="offwork-emp-row ok-row">
                 <div className="offwork-emp-avatar" style={{background:ac.bg,color:ac.color}}>{initials(e.nom)}</div>
                 <div style={{flex:1,minWidth:0}}>
                   <div className="offwork-emp-name">{e.nom}</div>
-                  <div className="offwork-emp-meta">
-                    {e.heure_arrivee !== "--:--" ? `Arrivée ${e.heure_arrivee}` : ""}
-                    {e.heure_depart && e.heure_depart !== "--:--" ? ` · Départ ${e.heure_depart}` : ""}
-                  </div>
+                  <div className="offwork-emp-meta">{e.heure_arrivee!=="--:--"?`${t.arrival} ${e.heure_arrivee}`:""}{e.heure_depart&&e.heure_depart!=="--:--"?` · ${t.departure} ${e.heure_depart}`:""}</div>
                 </div>
                 <span className="offwork-emp-badge badge-ok">OK ✓</span>
               </div>
@@ -901,21 +779,21 @@ function OffWorkPanel({ employes, colorMap }) {
           })}
         </div>
         <div className="offwork-col">
-          <div className="offwork-col-title col-alert"><span>⚠️</span> Infractions ({allAlert.length})</div>
-          {allAlert.length === 0 && <div className="offwork-empty">Aucune infraction détectée.</div>}
-          {allAlert.map((e) => {
-            const ac = colorMap[e.user_id] || avatarColor(0);
-            const tags = [];
-            if (e.retard_min > 0) tags.push(`Retard +${e.retard_min}min`);
-            if (e.depassements_sec > 0) tags.push(`Dépassement ${fmtSec(e.depassements_sec)}`);
-            return (
+          <div className="offwork-col-title col-alert">⚠️ {t.violations} ({allAlert.length})</div>
+          {allAlert.length===0&&<div className="offwork-empty">{t.noViolation}</div>}
+          {allAlert.map(e=>{
+            const ac=colorMap[e.user_id]||avatarColor(0);
+            const tags=[];
+            if(e.retard_min>0)tags.push(`${t.delay} +${e.retard_min}min`);
+            if(e.depassements_sec>0)tags.push(`${t.overruns} ${fmtSec(e.depassements_sec)}`);
+            return(
               <div key={e.user_id} className="offwork-emp-row alert-row">
                 <div className="offwork-emp-avatar" style={{background:ac.bg,color:ac.color}}>{initials(e.nom)}</div>
                 <div style={{flex:1,minWidth:0}}>
                   <div className="offwork-emp-name">{e.nom}</div>
                   <div className="offwork-emp-meta" style={{color:'var(--red)'}}>{tags.join(' · ')}</div>
                 </div>
-                <span className="offwork-emp-badge badge-alert">⚠ Alerte</span>
+                <span className="offwork-emp-badge badge-alert">⚠</span>
               </div>
             );
           })}
@@ -925,125 +803,117 @@ function OffWorkPanel({ employes, colorMap }) {
   );
 }
 
-// ===================== CALENDAR =====================
-function CalendarView({ emp, colorIdx, history }) {
-  const today   = new Date();
-  const [viewYear,  setViewYear]  = useState(today.getFullYear());
-  const [viewMonth, setViewMonth] = useState(today.getMonth());
-  const [selDay,    setSelDay]    = useState(null);
+function MonthlyChart({data,t}){
+  const ref=useRef(null),chartRef=useRef(null);
+  useEffect(()=>{
+    if(!ref.current)return;
+    if(chartRef.current){chartRef.current.destroy();chartRef.current=null;}
+    const labels=data.map(r=>r.date),vals=data.map(r=>r.heures);
+    const colors=data.map(r=>r.statut==="present"||r.statut==="offwork"?"rgba(34,211,122,0.65)":"rgba(240,78,94,0.35)");
+    chartRef.current=new Chart(ref.current,{
+      type:"bar",
+      data:{labels,datasets:[{label:t.hoursWorked,data:vals,backgroundColor:colors,borderRadius:4,borderSkipped:false}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw}h`}}},
+        scales:{x:{grid:{display:false},ticks:{color:"#888",font:{size:10}}},
+                y:{min:0,max:12,ticks:{color:"#888",font:{size:10},callback:v=>`${v}h`},grid:{color:"rgba(128,128,128,0.08)"}}}}
+    });
+    return()=>{if(chartRef.current)chartRef.current.destroy();};
+  },[data]);
+  return<canvas ref={ref}/>;
+}
 
-  function prevMonth() {
-    if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y-1); }
-    else setViewMonth(m => m-1);
-    setSelDay(null);
+function CalendarView({emp,colorIdx,history,t}){
+  const today=new Date();
+  const[viewYear,setViewYear]=useState(today.getFullYear());
+  const[viewMonth,setViewMonth]=useState(today.getMonth());
+  const[selDay,setSelDay]=useState(null);
+  function prevM(){if(viewMonth===0){setViewMonth(11);setViewYear(y=>y-1);}else setViewMonth(m=>m-1);setSelDay(null);}
+  function nextM(){if(viewMonth===11){setViewMonth(0);setViewYear(y=>y+1);}else setViewMonth(m=>m+1);setSelDay(null);}
+  const firstDay=new Date(viewYear,viewMonth,1);
+  let sdow=firstDay.getDay()-1;if(sdow<0)sdow=6;
+  const dim=new Date(viewYear,viewMonth+1,0).getDate();
+  const dip=new Date(viewYear,viewMonth,0).getDate();
+  const cells=[];
+  for(let i=sdow-1;i>=0;i--)cells.push({day:dip-i,month:'prev'});
+  for(let d=1;d<=dim;d++){
+    const ds=`${viewYear}-${padZ(viewMonth+1)}-${padZ(d)}`;
+    const dt=new Date(viewYear,viewMonth,d);
+    cells.push({day:d,month:'cur',dateStr:ds,dt,weekend:dt.getDay()===0||dt.getDay()===6});
   }
-  function nextMonth() {
-    if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y+1); }
-    else setViewMonth(m => m+1);
-    setSelDay(null);
-  }
-
-  const firstDay = new Date(viewYear, viewMonth, 1);
-  let startDow = firstDay.getDay() - 1;
-  if (startDow < 0) startDow = 6;
-  const daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
-  const daysInPrev  = new Date(viewYear, viewMonth,   0).getDate();
-
-  const cells = [];
-  for (let i = startDow - 1; i >= 0; i--) cells.push({ day: daysInPrev - i, month: 'prev' });
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dateStr = `${viewYear}-${padZ(viewMonth+1)}-${padZ(d)}`;
-    const dt = new Date(viewYear, viewMonth, d);
-    const dow = dt.getDay();
-    cells.push({ day: d, month: 'cur', dateStr, dt, weekend: dow === 0 || dow === 6 });
-  }
-  const rem = 42 - cells.length;
-  for (let i = 1; i <= rem; i++) cells.push({ day: i, month: 'next' });
-
-  const selectedData = selDay && history ? history[selDay] : null;
-
-  const monthStats = useMemo(() => {
-    if (!history) return { presents:0, absents:0, retards:0, totalSec:0 };
-    let presents=0, absents=0, retards=0, totalSec=0;
-    for (let d=1; d<=daysInMonth; d++) {
-      const k = `${viewYear}-${padZ(viewMonth+1)}-${padZ(d)}`;
-      const h = history[k];
-      if (!h) continue;
-      if (h.statut === 'absent') absents++;
-      else { presents++; if (h.retard_min>0) retards++; totalSec += (h.temps_effectif_sec||0); }
+  const rem=42-cells.length;for(let i=1;i<=rem;i++)cells.push({day:i,month:'next'});
+  const selData=selDay&&history?history[selDay]:null;
+  const monthStats=useMemo(()=>{
+    if(!history)return{presents:0,absents:0,retards:0,totalSec:0};
+    let p=0,a=0,r=0,ts=0;
+    for(let d=1;d<=dim;d++){
+      const k=`${viewYear}-${padZ(viewMonth+1)}-${padZ(d)}`;
+      const h=history[k];if(!h)continue;
+      if(h.statut==='absent')a++;else{p++;if(h.retard_min>0)r++;ts+=(h.temps_effectif_sec||0);}
     }
-    return { presents, absents, retards, totalSec };
-  }, [history, viewYear, viewMonth, daysInMonth]);
-
-  return (
+    return{presents:p,absents:a,retards:r,totalSec:ts};
+  },[history,viewYear,viewMonth,dim]);
+  return(
     <div>
       <div className="monthly-metrics" style={{marginBottom:16}}>
-        <div className="metric-card green"><div className="metric-label">Jours présents</div><div className="metric-value green">{monthStats.presents}</div></div>
-        <div className="metric-card red"><div className="metric-label">Jours absents</div><div className="metric-value red">{monthStats.absents}</div></div>
-        <div className="metric-card amber"><div className="metric-label">Retards</div><div className="metric-value amber">{monthStats.retards}</div></div>
-        <div className="metric-card blue"><div className="metric-label">Total heures</div><div className="metric-value blue">{fmtHM(monthStats.totalSec)}</div></div>
+        <div className="metric-card green"><div className="metric-label">{t.daysPresent}</div><div className="metric-value green">{monthStats.presents}</div></div>
+        <div className="metric-card red"><div className="metric-label">{t.daysAbsent}</div><div className="metric-value red">{monthStats.absents}</div></div>
+        <div className="metric-card amber"><div className="metric-label">{t.delays}</div><div className="metric-value amber">{monthStats.retards}</div></div>
+        <div className="metric-card blue"><div className="metric-label">{t.totalHours}</div><div className="metric-value blue">{fmtHM(monthStats.totalSec)}</div></div>
       </div>
       <div className="calendar-wrap">
         <div className="calendar-nav">
-          <button className="cal-nav-btn" onClick={prevMonth}>‹</button>
-          <div className="calendar-nav-title">{MONTHS_FR[viewMonth]} {viewYear}</div>
-          <button className="cal-nav-btn" onClick={nextMonth}>›</button>
+          <button className="cal-nav-btn" onClick={prevM}>‹</button>
+          <div className="calendar-nav-title">{t.months[viewMonth]} {viewYear}</div>
+          <button className="cal-nav-btn" onClick={nextM}>›</button>
         </div>
         <div className="legend-row">
-          <div className="legend-item"><div className="legend-dot" style={{background:'var(--green)'}}></div>Présent</div>
-          <div className="legend-item"><div className="legend-dot" style={{background:'var(--blue)'}}></div>Off Work</div>
-          <div className="legend-item"><div className="legend-dot" style={{background:'var(--red)'}}></div>Absent</div>
-          <div className="legend-item"><div className="legend-dot" style={{background:'var(--amber)'}}></div>Retard/Dépassement</div>
+          <div className="legend-item"><div className="legend-dot" style={{background:'var(--green)'}}></div>{t.present}</div>
+          <div className="legend-item"><div className="legend-dot" style={{background:'var(--blue)'}}></div>{t.offWorkDone}</div>
+          <div className="legend-item"><div className="legend-dot" style={{background:'var(--red)'}}></div>{t.absent}</div>
+          <div className="legend-item"><div className="legend-dot" style={{background:'var(--amber)'}}></div>{t.delay}/{t.overruns}</div>
         </div>
         <div className="calendar-grid">
-          {DAYS_FR.map(d => <div key={d} className="cal-day-header">{d}</div>)}
-          {cells.map((cell, idx) => {
-            if (cell.month !== 'cur') {
-              return <div key={idx} className="cal-day empty other-month"><span className="cal-day-num" style={{color:'var(--text3)'}}>{cell.day}</span></div>;
+          {t.days.map(d=><div key={d} className="cal-day-header">{d}</div>)}
+          {cells.map((cell,idx)=>{
+            if(cell.month!=='cur')return<div key={idx} className="cal-day empty other-month"><span className="cal-day-num" style={{color:'var(--text3)'}}>{cell.day}</span></div>;
+            const isToday=cell.dt&&cell.dt.toDateString()===today.toDateString();
+            const isFuture=cell.dt&&cell.dt>today;
+            const h=history&&history[cell.dateStr];
+            let dc="cal-day",dot=null;
+            if(cell.weekend)dc+=" day-weekend";
+            else if(!isFuture&&h){
+              if(h.statut==='absent'){dc+=" day-absent";dot="dot-absent-c";}
+              else if(h.statut==='offwork'){dc+=" day-offwork";dot="dot-offwork-c";}
+              else{dc+=" day-present";dot="dot-present-c";}
+              if(h.retard_min>0||h.depassements_sec>0)dot="dot-offwork-c";
             }
-            const isToday  = cell.dt && cell.dt.toDateString() === today.toDateString();
-            const isFuture = cell.dt && cell.dt > today;
-            const h = history && history[cell.dateStr];
-            let dayClass = "cal-day";
-            let dotClass = null;
-            if (cell.weekend) dayClass += " day-weekend";
-            else if (!isFuture && h) {
-              if (h.statut === 'absent')  { dayClass += " day-absent";  dotClass = "dot-absent-c"; }
-              else if (h.statut === 'offwork') { dayClass += " day-offwork"; dotClass = "dot-offwork-c"; }
-              else { dayClass += " day-present"; dotClass = "dot-present-c"; }
-              if (h.retard_min > 0 || h.depassements_sec > 0) dotClass = "dot-offwork-c";
-            }
-            if (isToday) dayClass += " today";
-            if (selDay === cell.dateStr) dayClass += " selected";
-            return (
-              <div key={idx} className={dayClass}
-                onClick={() => !cell.weekend && !isFuture && setSelDay(selDay === cell.dateStr ? null : cell.dateStr)}>
+            if(isToday)dc+=" today";
+            if(selDay===cell.dateStr)dc+=" selected";
+            return(
+              <div key={idx} className={dc} onClick={()=>!cell.weekend&&!isFuture&&setSelDay(selDay===cell.dateStr?null:cell.dateStr)}>
                 <span className="cal-day-num">{cell.day}</span>
-                {dotClass && !isFuture && !cell.weekend && <div className={`cal-day-dot ${dotClass}`}></div>}
+                {dot&&!isFuture&&!cell.weekend&&<div className={`cal-day-dot ${dot}`}></div>}
               </div>
             );
           })}
         </div>
-        {selDay && (
+        {selDay&&(
           <div className="cal-detail">
             <div className="cal-detail-date">
-              <span style={{fontSize:18}}>{selectedData ? (selectedData.statut==='absent' ? '❌' : selectedData.retard_min>0||selectedData.depassements_sec>0 ? '⚠️' : '✅') : '📅'}</span>
-              {new Date(selDay+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
+              <span style={{fontSize:18}}>{selData?(selData.statut==='absent'?'❌':selData.retard_min>0||selData.depassements_sec>0?'⚠️':'✅'):'📅'}</span>
+              {new Date(selDay+'T12:00:00').toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
             </div>
-            {!selectedData ? (
-              <div style={{color:'var(--text3)',fontSize:13}}>Aucune donnée pour cette journée.</div>
-            ) : selectedData.statut === 'absent' ? (
-              <div style={{color:'var(--red)',fontSize:13}}>⛔ Employé absent ce jour-là.</div>
-            ) : (
-              <div className="cal-detail-grid">
-                <div className="cal-detail-stat"><div className="cal-detail-stat-label">Arrivée</div><div className="cal-detail-stat-val" style={{color:'var(--green)',fontFamily:'monospace'}}>{selectedData.heure_arrivee||'--:--'}</div></div>
-                <div className="cal-detail-stat"><div className="cal-detail-stat-label">Départ</div><div className="cal-detail-stat-val" style={{color:'var(--blue)',fontFamily:'monospace'}}>{selectedData.heure_depart||'--:--'}</div></div>
-                <div className="cal-detail-stat"><div className="cal-detail-stat-label">Retard</div><div className="cal-detail-stat-val" style={{color:selectedData.retard_min>0?'var(--red)':'var(--green)'}}>{selectedData.retard_min>0?`+${selectedData.retard_min} min`:'Aucun'}</div></div>
-                <div className="cal-detail-stat"><div className="cal-detail-stat-label">Dépassements</div><div className="cal-detail-stat-val" style={{color:selectedData.depassements_sec>0?'var(--amber)':'var(--green)'}}>{selectedData.depassements_sec>0?fmtSec(selectedData.depassements_sec):'Aucun'}</div></div>
-                <div className="cal-detail-stat"><div className="cal-detail-stat-label">Travail effectif</div><div className="cal-detail-stat-val" style={{color:'var(--blue)'}}>{fmtHM(selectedData.temps_effectif_sec)}</div></div>
-                <div className="cal-detail-stat"><div className="cal-detail-stat-label">Statut</div><div className="cal-detail-stat-val" style={{fontSize:13}}>{selectedData.statut==='offwork'?<span style={{color:'var(--blue)'}}>✔ Off Work</span>:<span style={{color:'var(--green)'}}>● Présent</span>}</div></div>
-              </div>
-            )}
+            {!selData?<div style={{color:'var(--text3)',fontSize:13}}>{t.noData}</div>
+             :selData.statut==='absent'?<div style={{color:'var(--red)',fontSize:13}}>{t.absentDay}</div>
+             :<div className="cal-detail-grid">
+                <div className="cal-detail-stat"><div className="cal-detail-stat-label">{t.arrivalTime}</div><div className="cal-detail-stat-val" style={{color:'var(--green)',fontFamily:'monospace'}}>{selData.heure_arrivee||'--:--'}</div></div>
+                <div className="cal-detail-stat"><div className="cal-detail-stat-label">{t.departureTime}</div><div className="cal-detail-stat-val" style={{color:'var(--blue)',fontFamily:'monospace'}}>{selData.heure_depart||'--:--'}</div></div>
+                <div className="cal-detail-stat"><div className="cal-detail-stat-label">{t.delay}</div><div className="cal-detail-stat-val" style={{color:selData.retard_min>0?'var(--red)':'var(--green)'}}>{selData.retard_min>0?`+${selData.retard_min} min`:t.none}</div></div>
+                <div className="cal-detail-stat"><div className="cal-detail-stat-label">{t.overruns}</div><div className="cal-detail-stat-val" style={{color:selData.depassements_sec>0?'var(--amber)':'var(--green)'}}>{selData.depassements_sec>0?fmtSec(selData.depassements_sec):t.none}</div></div>
+                <div className="cal-detail-stat"><div className="cal-detail-stat-label">{t.effectiveTime}</div><div className="cal-detail-stat-val" style={{color:'var(--blue)'}}>{fmtHM(selData.temps_effectif_sec)}</div></div>
+                <div className="cal-detail-stat"><div className="cal-detail-stat-label">{t.status}</div><div className="cal-detail-stat-val" style={{fontSize:13}}>{selData.statut==='offwork'?<span style={{color:'var(--blue)'}}>{t.offWorkDone}</span>:<span style={{color:'var(--green)'}}>{t.stillPresent}</span>}</div></div>
+              </div>}
           </div>
         )}
       </div>
@@ -1051,79 +921,67 @@ function CalendarView({ emp, colorIdx, history }) {
   );
 }
 
-// ===================== EMPLOYEE MONTHLY VIEW =====================
-function EmployeeMonthlyView({ emp, colorIdx, history }) {
-  const [subTab, setSubTab] = useState("calendar");
-  const today = new Date();
-  const viewYear  = today.getFullYear();
-  const viewMonth = today.getMonth();
-  const daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
-
-  const rows = useMemo(() => {
-    const r = [];
-    for (let d=1; d<=daysInMonth; d++) {
-      const dt  = new Date(viewYear, viewMonth, d);
-      if (dt > today) continue;
-      const dow = dt.getDay();
-      if (dow === 0 || dow === 6) continue;
-      const k = `${viewYear}-${padZ(viewMonth+1)}-${padZ(d)}`;
-      const h = history && history[k];
-      r.push({
-        date:   `${padZ(d)}/${padZ(viewMonth+1)}`,
-        arrivee: h ? (h.heure_arrivee||'--:--') : '--:--',
-        depart:  h ? (h.heure_depart||'--:--')  : '--:--',
-        travail: h && h.temps_effectif_sec ? fmtHM(h.temps_effectif_sec) : '--',
-        heures:  h && h.temps_effectif_sec ? Math.round(h.temps_effectif_sec/360)/10 : 0,
-        retard:  h ? (h.retard_min||0) : 0,
-        depass:  h ? (h.depassements_sec||0) : 0,
-        statut:  h ? h.statut : 'absent',
-      });
+function EmployeeMonthlyView({emp,colorIdx,history,t}){
+  const[subTab,setSubTab]=useState("calendar");
+  const today=new Date();
+  const vy=today.getFullYear(),vm=today.getMonth();
+  const dim=new Date(vy,vm+1,0).getDate();
+  const rows=useMemo(()=>{
+    const r=[];
+    for(let d=1;d<=dim;d++){
+      const dt=new Date(vy,vm,d);if(dt>today)continue;
+      const dow=dt.getDay();if(dow===0||dow===6)continue;
+      const k=`${vy}-${padZ(vm+1)}-${padZ(d)}`;
+      const h=history&&history[k];
+      r.push({date:`${padZ(d)}/${padZ(vm+1)}`,
+              arrivee:h?(h.heure_arrivee||'--:--'):'--:--',
+              depart:h?(h.heure_depart||'--:--'):'--:--',
+              travail:h&&h.temps_effectif_sec?fmtHM(h.temps_effectif_sec):'--',
+              heures:h&&h.temps_effectif_sec?Math.round(h.temps_effectif_sec/360)/10:0,
+              retard:h?(h.retard_min||0):0,
+              depass:h?(h.depassements_sec||0):0,
+              statut:h?h.statut:'absent'});
     }
     return r;
-  }, [history, viewYear, viewMonth, daysInMonth]);
-
-  return (
+  },[history,vy,vm,dim]);
+  return(
     <div>
       <div className="sub-tab-bar">
-        <button className={`sub-tab-btn ${subTab==='calendar'?'active':''}`} onClick={()=>setSubTab('calendar')}>📅 Calendrier</button>
-        <button className={`sub-tab-btn ${subTab==='chart'?'active':''}`}    onClick={()=>setSubTab('chart')}>📊 Graphique</button>
-        <button className={`sub-tab-btn ${subTab==='table'?'active':''}`}    onClick={()=>setSubTab('table')}>📋 Tableau</button>
+        <button className={`sub-tab-btn ${subTab==='calendar'?'active':''}`} onClick={()=>setSubTab('calendar')}>📅 {t.calTitle}</button>
+        <button className={`sub-tab-btn ${subTab==='chart'?'active':''}`}    onClick={()=>setSubTab('chart')}>📊 {t.chartTitle}</button>
+        <button className={`sub-tab-btn ${subTab==='table'?'active':''}`}    onClick={()=>setSubTab('table')}>📋 {t.tableTitle}</button>
       </div>
-      {subTab === 'calendar' && <CalendarView emp={emp} colorIdx={colorIdx} history={history} />}
-      {subTab === 'chart' && (
+      {subTab==='calendar'&&<CalendarView emp={emp} colorIdx={colorIdx} history={history} t={t}/>}
+      {subTab==='chart'&&(
         <div className="chart-card">
-          <div className="chart-card-title">Heures travaillées — {MONTHS_FR[viewMonth]} {viewYear}</div>
+          <div className="chart-card-title">{t.hoursWorked} — {t.months[vm]} {vy}</div>
           <div style={{display:"flex",gap:14,marginBottom:10,fontSize:11,color:"var(--text3)"}}>
-            <span><span style={{display:"inline-block",width:10,height:10,borderRadius:2,background:"rgba(34,211,122,0.65)",marginRight:4}}></span>Présent</span>
-            <span><span style={{display:"inline-block",width:10,height:10,borderRadius:2,background:"rgba(240,78,94,0.35)",marginRight:4}}></span>Absent</span>
+            <span><span style={{display:"inline-block",width:10,height:10,borderRadius:2,background:"rgba(34,211,122,0.65)",marginRight:4}}></span>{t.present}</span>
+            <span><span style={{display:"inline-block",width:10,height:10,borderRadius:2,background:"rgba(240,78,94,0.35)",marginRight:4}}></span>{t.absent}</span>
           </div>
-          <div className="chart-wrap"><MonthlyChart data={rows} /></div>
+          <div className="chart-wrap"><MonthlyChart data={rows} t={t}/></div>
         </div>
       )}
-      {subTab === 'table' && (
+      {subTab==='table'&&(
         <div className="monthly-table-wrap">
           <div className="monthly-table-header">
-            <span>Détail journalier — {MONTHS_FR[viewMonth]} {viewYear}</span>
-            <span style={{fontSize:11,color:'var(--text3)'}}>{rows.filter(r=>r.statut!=='absent').length} jours ouvrés</span>
+            <span>{t.detailTitle} — {t.months[vm]} {vy}</span>
+            <span style={{fontSize:11,color:'var(--text3)'}}>{rows.filter(r=>r.statut!=='absent').length} {t.workingDays}</span>
           </div>
           <table className="monthly-table">
-            <thead>
-              <tr><th>Date</th><th>Arrivée</th><th>Départ</th><th>Durée</th><th>Retard</th><th>Dépassements</th><th>Statut</th></tr>
-            </thead>
+            <thead><tr><th>{t.date}</th><th>{t.arrivalTime}</th><th>{t.departureTime}</th><th>{t.travelDur}</th><th>{t.delay}</th><th>{t.overruns}</th><th>{t.status}</th></tr></thead>
             <tbody>
-              {rows.map((r,i) => (
+              {rows.map((r,i)=>(
                 <tr key={i}>
                   <td style={{fontWeight:500}}>{r.date}</td>
                   <td style={{fontFamily:'monospace'}}>{r.arrivee}</td>
                   <td style={{fontFamily:'monospace'}}>{r.depart}</td>
                   <td>{r.travail}</td>
-                  <td>{r.retard > 0 ? <span className="exceeded-pill">+{r.retard}min</span> : <span className="ok-pill">—</span>}</td>
-                  <td>{r.depass > 0 ? <span className="exceeded-pill">+{fmtSec(r.depass)}</span> : <span className="ok-pill">—</span>}</td>
-                  <td>
-                    {r.statut==='offwork' ? <span className="ok-pill" style={{background:'var(--blue-bg)',borderColor:'var(--blue-b)',color:'var(--blue)'}}>Off Work</span>
-                     : r.statut!=='absent' ? <span className="ok-pill">Présent</span>
-                     : <span className="exceeded-pill">Absent</span>}
-                  </td>
+                  <td>{r.retard>0?<span className="exceeded-pill">+{r.retard}min</span>:<span className="ok-pill">—</span>}</td>
+                  <td>{r.depass>0?<span className="exceeded-pill">+{fmtSec(r.depass)}</span>:<span className="ok-pill">—</span>}</td>
+                  <td>{r.statut==='offwork'?<span className="ok-pill" style={{background:'var(--blue-bg)',borderColor:'var(--blue-b)',color:'var(--blue)'}}>Off Work</span>
+                      :r.statut!=='absent'?<span className="ok-pill">{t.present}</span>
+                      :<span className="exceeded-pill">{t.absent}</span>}</td>
                 </tr>
               ))}
             </tbody>
@@ -1134,153 +992,162 @@ function EmployeeMonthlyView({ emp, colorIdx, history }) {
   );
 }
 
+// ===================== SETTINGS PANEL =====================
+function SettingsPanel({dark,setDark,lang,setLang,t,onClose}){
+  const ref=useRef(null);
+  useEffect(()=>{
+    function handler(e){if(ref.current&&!ref.current.contains(e.target))onClose();}
+    document.addEventListener('mousedown',handler);
+    return()=>document.removeEventListener('mousedown',handler);
+  },[onClose]);
+  return(
+    <div className="settings-wrap" ref={ref}>
+      <div className="settings-panel">
+        <div>
+          <div className="sp-title">{t.settingsTitle}</div>
+        </div>
+        <div>
+          <div className="sp-title">{t.darkMode}</div>
+          <div className="sp-row">
+            <span className="sp-label">{dark?"🌙 Dark":"☀️ Light"}</span>
+            <label className="toggle">
+              <input type="checkbox" checked={dark} onChange={e=>setDark(e.target.checked)}/>
+              <span className="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        <div>
+          <div className="sp-title">{t.language}</div>
+          <div className="lang-btns">
+            <button className={`lang-btn ${lang==='en'?'active':''}`} onClick={()=>setLang('en')}>🇬🇧 EN</button>
+            <button className={`lang-btn ${lang==='fr'?'active':''}`} onClick={()=>setLang('fr')}>🇫🇷 FR</button>
+            <button className={`lang-btn ${lang==='zh'?'active':''}`} onClick={()=>setLang('zh')}>🇨🇳 中文</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ===================== APP =====================
-const DEFAULT_API = (typeof window !== "undefined" ? window.location.origin : "") + "/api/stats";
+const DEFAULT_API=(typeof window!=="undefined"?window.location.origin:"")+"/api/stats";
 
-function App() {
-  const [tab,       setTab]       = useState("daily");
-  const [apiUrl,    setApiUrl]    = useState(DEFAULT_API);
-  const [inputUrl,  setInputUrl]  = useState(DEFAULT_API);
-  const [data,      setData]      = useState(null);       // null = pas encore chargé
-  const [loading,   setLoading]   = useState(true);
-  const [error,     setError]     = useState(null);
-  const [isDemo,    setIsDemo]    = useState(false);
-  const [selIdx,    setSelIdx]    = useState(0);
-  const apiEverOk  = React.useRef(false);                 // API a répondu au moins 1 fois
+function App(){
+  const[tab,setTab]=useState("daily");
+  const[apiUrl,setApiUrl]=useState(DEFAULT_API);
+  const[inputUrl,setInputUrl]=useState(DEFAULT_API);
+  const[data,setData]=useState(null);
+  const[loading,setLoading]=useState(true);
+  const[error,setError]=useState(null);
+  const[isDemo,setIsDemo]=useState(false);
+  const[selIdx,setSelIdx]=useState(0);
+  const[showSettings,setShowSettings]=useState(false);
+  const[dark,setDark]=useState(true);
+  const[lang,setLang]=useState("en");
+  const apiEverOk=useRef(false);
+  const t=I18N[lang];
 
-  const employes = data?.employes || [];
-  const selected = employes[selIdx] || employes[0];
+  // Apply theme
+  useEffect(()=>{
+    document.documentElement.classList.toggle("light",!dark);
+  },[dark]);
 
-  // Couleur indexée par user_id pour le panel Off Work
-  const colorMap = useMemo(() => {
-    const m = {};
-    employes.forEach((e, i) => { m[e.user_id] = avatarColor(i); });
-    return m;
-  }, [employes]);
+  // Persist prefs
+  useEffect(()=>{
+    try{const s=JSON.parse(localStorage.getItem("bm_prefs")||"{}");
+      if(s.dark!==undefined)setDark(s.dark);
+      if(s.lang)setLang(s.lang);}
+    catch{}
+  },[]);
+  useEffect(()=>{
+    try{localStorage.setItem("bm_prefs",JSON.stringify({dark,lang}));}catch{}
+  },[dark,lang]);
 
-  // Historiques mensuels (simulés en démo, vides en live — à brancher sur une vraie API mensuelle)
-  const [histories, setHistories] = useState({});
-  useEffect(() => {
-    if (isDemo && employes.length > 0) {
-      const h = {};
-      employes.forEach(e => { h[e.user_id] = makeDemoHistory(e.user_id); });
-      setHistories(h);
+  const employes=data?.employes||[];
+  const selected=employes[selIdx]||employes[0];
+  const colorMap=useMemo(()=>{const m={};employes.forEach((e,i)=>{m[e.user_id]=avatarColor(i);});return m;},[employes]);
+  const[histories,setHistories]=useState({});
+  useEffect(()=>{
+    if(isDemo&&employes.length>0){
+      const h={};employes.forEach(e=>{h[e.user_id]=makeDemoHistory(e.user_id);});setHistories(h);
     }
-  }, [isDemo, data]);
+  },[isDemo,data]);
 
-  const fetchData = useCallback(async (url) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const controller = new AbortController();
-      const tid = setTimeout(() => controller.abort(), 9000);
-      const res = await fetch(url, { cache: "no-store", signal: controller.signal });
+  const fetchData=useCallback(async(url)=>{
+    setLoading(true);setError(null);
+    try{
+      const ctrl=new AbortController();
+      const tid=setTimeout(()=>ctrl.abort(),9000);
+      const res=await fetch(url,{cache:"no-store",signal:ctrl.signal});
       clearTimeout(tid);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json = await res.json();
-      // API OK → mode live, même si liste vide (bot vient de démarrer)
-      apiEverOk.current = true;
-      setData(json);
-      setIsDemo(false);
-    } catch (e) {
-      const reason = e.name === "AbortError"
-        ? "délai dépassé — vérifiez que le bot Render est actif"
-        : e.message;
-      setError(`API inaccessible : ${reason}`);
-      // Bascule en démo uniquement si on n'a jamais eu de données réelles
-      if (!apiEverOk.current) {
-        setData(makeDemoData());
-        setIsDemo(true);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      if(!res.ok)throw new Error(`HTTP ${res.status}`);
+      const json=await res.json();
+      apiEverOk.current=true;setData(json);setIsDemo(false);
+    }catch(e){
+      const reason=e.name==="AbortError"?"timeout":e.message;
+      setError(`${t.apiErr}: ${reason}`);
+      if(!apiEverOk.current){setData(makeDemoData());setIsDemo(true);}
+    }finally{setLoading(false);}
+  },[t]);
 
-  // Auto-fetch au chargement initial
-  useEffect(() => {
-    fetchData(apiUrl);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useEffect(()=>{fetchData(apiUrl);},[]);
+  useEffect(()=>{const id=setInterval(()=>fetchData(apiUrl),15000);return()=>clearInterval(id);},[apiUrl,fetchData]);
+  const handleApply=()=>{setApiUrl(inputUrl);fetchData(inputUrl);};
 
-  // Auto-refresh toutes les 15 secondes
-  useEffect(() => {
-    const id = setInterval(() => fetchData(apiUrl), 15000);
-    return () => clearInterval(id);
-  }, [apiUrl, fetchData]);
-
-  const handleApply = () => {
-    setApiUrl(inputUrl);
-    fetchData(inputUrl);
-  };
-
-  return (
+  return(
     <div>
       {/* TOPBAR */}
       <div className="topbar">
         <div className="logo">
           <div className="logo-icon">⏱</div>
-          UptimeRobot Attendance
+          {t.appTitle}
         </div>
         <div className="topbar-center">
           <div className="tab-pill">
-            <button className={tab==="daily"  ?"active":""} onClick={()=>setTab("daily")}>Quotidien</button>
-            <button className={tab==="results"?"active":""} onClick={()=>setTab("results")}>Résultats</button>
-            <button className={tab==="monthly"?"active":""} onClick={()=>setTab("monthly")}>Mensuel</button>
+            <button className={tab==="daily"  ?"active":""} onClick={()=>setTab("daily")}>{t.tabDaily}</button>
+            <button className={tab==="results"?"active":""} onClick={()=>setTab("results")}>{t.tabResults}</button>
+            <button className={tab==="monthly"?"active":""} onClick={()=>setTab("monthly")}>{t.tabMonthly}</button>
           </div>
         </div>
         <div className="topbar-right">
           <div className="live-indicator">
-            <div className="live-dot" />
-            {isDemo ? "Démo" : "En direct"}
+            <div className="live-dot"/>
+            {isDemo?t.demo:t.live}
           </div>
-          <button
-            className={`refresh-btn ${loading ? "spin" : ""}`}
-            onClick={() => fetchData(apiUrl)}
-            title="Rafraîchir"
-          >
+          {/* Refresh */}
+          <button className={`icon-btn sq ${loading?"spin":""}`} onClick={()=>fetchData(apiUrl)} title="Refresh">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M23 4v6h-6M1 20v-6h6"/>
               <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
             </svg>
           </button>
+          {/* Settings gear */}
+          <div style={{position:'relative'}}>
+            <button className="icon-btn sq" onClick={()=>setShowSettings(s=>!s)} title={t.settingsTitle}>⚙️</button>
+            {showSettings&&<SettingsPanel dark={dark} setDark={setDark} lang={lang} setLang={setLang} t={t} onClose={()=>setShowSettings(false)}/>}
+          </div>
         </div>
       </div>
 
       <div className="app-shell">
         {/* SIDEBAR */}
         <div className="sidebar">
-          {/* API config */}
           <div style={{padding:"0 4px 12px"}}>
-            <div className="section-title">URL de l'API bot</div>
-            <div className="config-bar" style={{flexDirection:"column",alignItems:"stretch",gap:6}}>
-              <input
-                value={inputUrl}
-                onChange={e => setInputUrl(e.target.value)}
-                placeholder="https://votre-bot.onrender.com/api/stats"
-                onKeyDown={e => e.key === "Enter" && handleApply()}
-              />
-              <button className="apply-btn" onClick={handleApply}>Connecter →</button>
+            <div className="section-title">{t.apiLabel}</div>
+            <div className="config-bar">
+              <input value={inputUrl} onChange={e=>setInputUrl(e.target.value)}
+                placeholder="https://your-bot.onrender.com/api/stats"
+                onKeyDown={e=>e.key==="Enter"&&handleApply()}/>
+              <button className="apply-btn" onClick={handleApply}>{t.connectBtn}</button>
             </div>
-            {isDemo && (
-              <div style={{fontSize:10,color:"var(--text3)",marginTop:6,padding:"0 2px"}}>
-                Mode démonstration — configurez l'URL de votre bot ci-dessus
-              </div>
-            )}
+            {isDemo&&<div style={{fontSize:10,color:"var(--text3)",marginTop:6,padding:"0 2px"}}>{t.demoNote}</div>}
           </div>
-
-          <div className="sidebar-label">Employés ({employes.length})</div>
-          {employes.map((e, i) => {
-            const ac = avatarColor(i);
-            return (
-              <div
-                key={e.user_id}
-                className={`user-row ${selIdx===i?"active":""}`}
-                onClick={() => setSelIdx(i)}
-              >
-                <div className="user-avatar" style={{background:ac.bg,color:ac.color}}>
-                  {initials(e.nom)}
-                </div>
+          <div className="sidebar-label">{t.employees} ({employes.length})</div>
+          {employes.map((e,i)=>{
+            const ac=avatarColor(i);
+            return(
+              <div key={e.user_id} className={`user-row ${selIdx===i?"active":""}`} onClick={()=>setSelIdx(i)}>
+                <div className="user-avatar" style={{background:ac.bg,color:ac.color}}>{initials(e.nom)}</div>
                 <div className="user-row-info">
                   <div className="user-row-name">{e.nom}</div>
                   <div className="user-row-id">#{e.user_id}</div>
@@ -1293,74 +1160,56 @@ function App() {
 
         {/* MAIN */}
         <div className="main-content">
-          {/* Bannière erreur */}
-          {error && (
-            <div className="error-banner">⚠ {error}</div>
-          )}
+          {error&&<div className="error-banner">⚠ {error}</div>}
 
-          {/* Chargement initial (data === null) */}
-          {data === null && loading && (
+          {data===null&&loading&&(
             <div className="empty-state">
               <div className="empty-icon" style={{animation:"spin 1s linear infinite",display:"inline-block"}}>↻</div>
-              <div className="empty-text">Connexion à l'API du bot…</div>
+              <div className="empty-text">{t.connecting}</div>
             </div>
           )}
 
-          {/* API connectée mais aucun employé n'a encore pointé */}
-          {data !== null && !isDemo && employes.length === 0 && (
+          {data!==null&&!isDemo&&employes.length===0&&(
             <div className="empty-state">
               <div className="empty-icon">🟢</div>
               <div className="empty-text" style={{textAlign:'center'}}>
-                Bot connecté — en attente des pointages.<br/>
-                <span style={{fontSize:12,color:'var(--text3)'}}>Les employés apparaîtront ici dès qu'ils appuieront sur 🟢 Start Work.</span>
+                {t.botConnected}<br/>
+                <span style={{fontSize:12,color:'var(--text3)'}}>{t.botConnectedSub}</span>
               </div>
             </div>
           )}
 
-          {/* QUOTIDIEN */}
-          {tab === "daily" && selected && <DailyView emp={selected} colorIdx={selIdx} />}
-          {tab === "daily" && !selected && data !== null && employes.length === 0 && !loading && (
-            <div className="empty-state"><div className="empty-icon">👥</div><div className="empty-text">Aucun employé actif</div></div>
+          {/* DAILY */}
+          {tab==="daily"&&selected&&<DailyView emp={selected} colorIdx={selIdx} t={t}/>}
+          {tab==="daily"&&!selected&&data!==null&&employes.length===0&&!loading&&(
+            <div className="empty-state"><div className="empty-icon">👥</div><div className="empty-text">{t.noEmp}</div></div>
           )}
 
-          {/* RÉSULTATS DU JOUR */}
-          {tab === "results" && (
+          {/* RESULTS */}
+          {tab==="results"&&(
             <div>
-              <OffWorkPanel employes={employes} colorMap={colorMap} />
+              <OffWorkPanel employes={employes} colorMap={colorMap} t={t}/>
               <div className="monthly-table-wrap">
-                <div className="monthly-table-header">
-                  <span>Récapitulatif du jour — Tous les employés</span>
-                </div>
+                <div className="monthly-table-header"><span>{t.recapAll}</span></div>
                 <table className="monthly-table">
-                  <thead>
-                    <tr>
-                      <th>Employé</th><th>Statut</th><th>Arrivée</th><th>Départ</th>
-                      <th>Travail net</th><th>Retard</th><th>Dépassements</th><th>Pauses</th>
-                    </tr>
-                  </thead>
+                  <thead><tr><th>{t.employee}</th><th>{t.status}</th><th>{t.arrivalTime}</th><th>{t.departureTime}</th><th>{t.netWork2}</th><th>{t.delay}</th><th>{t.overruns2}</th><th>{t.pauses2}</th></tr></thead>
                   <tbody>
-                    {employes.map((e, i) => {
-                      const ac = avatarColor(i);
-                      return (
+                    {employes.map((e,i)=>{
+                      const ac=avatarColor(i);
+                      return(
                         <tr key={e.user_id} onClick={()=>{setSelIdx(i);setTab('daily');}} style={{cursor:'pointer'}}>
-                          <td>
-                            <div style={{display:'flex',alignItems:'center',gap:8}}>
-                              <div style={{width:26,height:26,borderRadius:7,background:ac.bg,color:ac.color,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,flexShrink:0}}>
-                                {initials(e.nom)}
-                              </div>
-                              <span style={{fontWeight:500}}>{e.nom}</span>
-                            </div>
-                          </td>
-                          <td>
-                            {e.statut==="present" ? <span className="ok-pill">Présent</span>
-                             : e.statut==="pause"  ? <span className="ok-pill" style={{background:'var(--amber-bg)',borderColor:'var(--amber-b)',color:'var(--amber)'}}>En pause</span>
-                             : <span className="exceeded-pill">Absent</span>}
-                          </td>
+                          <td><div style={{display:'flex',alignItems:'center',gap:8}}>
+                            <div style={{width:26,height:26,borderRadius:7,background:ac.bg,color:ac.color,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,flexShrink:0}}>{initials(e.nom)}</div>
+                            <span style={{fontWeight:500}}>{e.nom}</span>
+                          </div></td>
+                          <td>{e.statut==="present"?<span className="ok-pill">{t.present}</span>
+                              :e.statut==="pause"?<span className="ok-pill" style={{background:'var(--amber-bg)',borderColor:'var(--amber-b)',color:'var(--amber)'}}>{t.onBreak}</span>
+                              :<span className="exceeded-pill">{t.absent}</span>}</td>
                           <td style={{fontFamily:'monospace'}}>{e.heure_arrivee}</td>
                           <td style={{fontFamily:'monospace'}}>{e.heure_depart}</td>
-                          <td>{e.temps_effectif_sec > 0 ? fmtHM(e.temps_effectif_sec) : '—'}</td>
-                          <td>{e.retard_min > 0 ? <span className="exceeded-pill">+{e.retard_min}min</span> : <span className="ok-pill">—</span>}</td>
-                          <td>{e.depassements_sec > 0 ? <span className="exceeded-pill">+{fmtSec(e.depassements_sec)}</span> : <span className="ok-pill">—</span>}</td>
+                          <td>{e.temps_effectif_sec>0?fmtHM(e.temps_effectif_sec):'—'}</td>
+                          <td>{e.retard_min>0?<span className="exceeded-pill">+{e.retard_min}min</span>:<span className="ok-pill">—</span>}</td>
+                          <td>{e.depassements_sec>0?<span className="exceeded-pill">+{fmtSec(e.depassements_sec)}</span>:<span className="ok-pill">—</span>}</td>
                           <td style={{color:'var(--text3)'}}>{e.departs_temporaires.count}× · {fmtSec(e.pauses_total_sec)}</td>
                         </tr>
                       );
@@ -1371,32 +1220,24 @@ function App() {
             </div>
           )}
 
-          {/* MENSUEL (par employé sélectionné) */}
-          {tab === "monthly" && selected && (
+          {/* MONTHLY */}
+          {tab==="monthly"&&selected&&(
             <div>
               <div className="profile-header" style={{marginBottom:18}}>
                 <div className="profile-left">
-                  <div className="profile-avatar" style={{background:avatarColor(selIdx).bg,color:avatarColor(selIdx).color}}>
-                    {initials(selected.nom)}
-                  </div>
+                  <div className="profile-avatar" style={{background:avatarColor(selIdx).bg,color:avatarColor(selIdx).color}}>{initials(selected.nom)}</div>
                   <div>
                     <div className="profile-name">{selected.nom}</div>
-                    <div className="profile-uid">Suivi mensuel · ID {selected.user_id}</div>
+                    <div className="profile-uid">{t.monthlySub} {selected.user_id}</div>
                   </div>
                 </div>
-                <div className="profile-right">
-                  <StatusBadge statut={selected.statut} />
-                </div>
+                <div className="profile-right"><StatusBadge statut={selected.statut} t={t}/></div>
               </div>
-              <EmployeeMonthlyView
-                emp={selected}
-                colorIdx={selIdx}
-                history={histories[selected.user_id] || {}}
-              />
+              <EmployeeMonthlyView emp={selected} colorIdx={selIdx} history={histories[selected.user_id]||{}} t={t}/>
             </div>
           )}
-          {tab === "monthly" && !selected && data !== null && (
-            <div className="empty-state"><div className="empty-icon">📅</div><div className="empty-text">Sélectionnez un employé dans la barre latérale</div></div>
+          {tab==="monthly"&&!selected&&data!==null&&(
+            <div className="empty-state"><div className="empty-icon">📅</div><div className="empty-text">{t.selectEmp}</div></div>
           )}
         </div>
       </div>
@@ -1404,7 +1245,7 @@ function App() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
 </body>
 </html>
