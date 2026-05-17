@@ -61,12 +61,12 @@ def today_madagascar() -> date:
 # =========================
 # GROUP LOCK
 # =========================
-ALLOWED_GROUP_ID = -1003922818442
+ALLOWED_GROUP_ID = -1003692081885
 
 # =========================
 # MANAGER — mentionné quand une pause est dépassée
 # =========================
-MANAGER_USERNAMES = ["@apasiihhhzz", "@Huruphidup", "@voplaledalala2"]
+MANAGER_USERNAMES = ["@apasiihhhzz", "@cegilinuarea", "@voplaledalala2"]
 managers_mention = " ".join(MANAGER_USERNAMES)
 
 
@@ -75,7 +75,7 @@ managers_mention = " ".join(MANAGER_USERNAMES)
 # Employés dont l'heure de début diffère de 07:40
 # =========================
 CUSTOM_START_TIMES = {
-    "maherylp": (8, 0),   # heure, minute
+    "maherylp": (8, 10),   # heure, minute
     # "autreusername": (9, 0),  ← ajoute d'autres ici si besoin
 }
 DEFAULT_START_TIME = (7, 40)  # heure par défaut pour tous les autres
@@ -138,7 +138,8 @@ BREAK_COLOR_EMOJIS = {
 }
 
 MAX_DAILY = {
-    BREAK_FOOD:       2,
+    BREAK_FOOD:       3,
+    BREAK_TOILET_SMALL:  6,
     BREAK_TOILET_BIG: 2,
     BREAK_SMOKE:      5
 }
@@ -298,21 +299,24 @@ def build_break_reminder(u: dict, now: datetime) -> str:
                 f"{line1}\n\n"
                 f"{line2}\n{line3}\n"
                 f"⚠️ Over limit by {fmt_duration_short(overtime)}\n\n"
-                f"Please check in and return to your seat and Press 🔵 BACK TO SEAT.\n\n"
-                f"Be careful not to spend too much time on breaks, time is precious and should not be wasted."
+                f"Check in and return to your seat and Press BACK TO SEAT.\n\n"
+                f"Be careful not to spend too much time on breaks, time is precious and should not be wasted.\n\n"
+                f"💸 Late returning to your seat will be fined."
             )
         return (
             f"{line1}\n\n"
             f"{line2}\n{line3}\n{line4}\n\n"
-            f"Please check in and return to your seat promptly after completing the activity.\n\n"
-            f"Press 🔵 BACK TO SEAT once you are seated.\n\n"
-            f"🔥 Yo man, your lack of awareness means you ain't focused on the job."
+            f"🗣 Ehh! Check in and return to your seat promptly after completing the activity.\n\n"
+            f"🔥 Yo man! Your lack of awareness means you ain't focused on the job.\n\n"
+            f"💸 Late returning to your seat will be fined.\n\n"
+            f"🔵 Press BACK TO SEAT once you are seated."
         )
     return (
         f"{emoji} You are still on a {label} break.\n\n"
-        f"Please check in and return to your seat promptly after completing the activity.\n\n"
-        f"Press 🔵 BACK TO SEAT once you are seated.\n\n"
-        f"🔥 Yo man, your lack of awareness means you ain't focused on the job."
+        f"🗣 Ehh! Check in and return to your seat promptly after completing the activity.\n\n"
+        f"💸 Yo man! If you’re just wasting time, you’re gonna get fined.\n\n"
+        f"🔵 Press BACK TO SEAT once you are seated."
+        
     )
 
 def build_back_to_seat_msg(name, username, user_id, now, b_start,
@@ -432,7 +436,8 @@ async def _send_break_warning(bot, chat_id, user_id, name, username,
                 f"*⚠️ Warning: You still have less than 2 minutes left "
                 f"for your {label} break.*\n\n"
                 f"Please make sure to return to your seat promptly once you have finished the activity.\n\n"
-                f"*💸 Yo man, messin' up your time management gonna get you punished* — this company don't play, and the grind don't wait."
+                f"*Yo man❗️ Messin' up your time management gonna get you punished* — this company don't play, and the grind don't wait.\n\n"
+                f"💸 Late returning to your seat will be fined."
             ),
             parse_mode="Markdown"
         )
@@ -446,9 +451,8 @@ async def _send_break_warning(bot, chat_id, user_id, name, username,
             f"👤User: {mention}\n"
             f"🪪 User ID: {user_id}\n\n"
             f"🚨 Time's up! Your {label} time limit has been reached.\n\n"
-            f"Please return to your seat immediately after completing the activity.\n\n"
-            f"🔵 And press BACK TO SEAT!\n\n"
-            f"❌ Yo man, your lack of awareness means you ain't focused on the job."
+            f"🔵 Once you are seated press BACK TO SEAT immediately!\n"
+            f"❌ You are fined because you exceeded the given time limit."
         )
     )
 
@@ -489,9 +493,8 @@ async def _send_break_warning(bot, chat_id, user_id, name, username,
                 f"🪪 User ID: {user_id}\n\n"
                 f"⏰ You have been on your {label} break for {fmt_duration(elapsed_total)}!\n"
                 f"⚠️ Over limit by: +{over_str}⚠️\n\n"
-                f"💡 Please press BACK TO SEAT immediately.\n"
-                f"Be careful not to spend too much time on breaks, time is precious and should not be wasted.\n\n"
-                f"*💸 Yo man, messin' up your time management gonna get you punished* — this company don't play, and the grind don't wait."
+                f"🔵 Once you are seated, please press BACK TO SEAT immediately.\n"
+                f"*💸 Yo man❗️ You are fined because you exceeded the given time limit.*"
             ),
             parse_mode="Markdown"
         )
@@ -639,11 +642,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Select the correct break type each time you leave your seat.\n\n"
         "🔵 *Back to Seat*\n"
         "Press after each break to confirm your return.\n\n"
-        "🍜 *Evening meal break only between 16:30 – 18:00*.\n\n"
-        "🚫 *All type break not allowed after 18:00*.\n\n"
-        "🏢 What the company values at that time is your focus and your commitment to the work.\n\n"
+        "🍜 *Meal break: Breakfast: 08:00, Lunch: 12:30 , Dinner: 18:00*.\n\n"
+        "🚫 *All type break not allowed after 18:40*.\n\n"
         "🕕 *Return Before End*\n"
-        "One hour before off work, return to your desk and stay seated.\n\n"
+        "🏢 Yo, what the company cares about right now is your focus and your hustle on the job.\n\n"
         "🔴 *Off Work*\n"
         "At day's end, press to close your workday.\n"
         "──────────────────────\n"
@@ -750,10 +752,10 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if stuck:
             await update.message.reply_text(
                 f"🚨 WARNING 🚨\n\n"
-                f"You have not pressed 🔵 BACK TO SEAT\n"
+                f"You have not pressed BACK TO SEAT\n"
+                f"Away for too long.\n\n"
+                f"🔵 Once you are seated, please press BACK TO SEAT immediately.\n"
                 f"Current break duration: {fmt_duration(stuck)}\n\n"
-                f"You have been away for too long.\n"
-                f"Please press BACK TO SEAT immediately upon returning to your seat.\n\n"
                 f"👤 @{username} — please confirm your return.\n\n"
                 f"👀  {', '.join(MANAGER_USERNAMES)} — {mention} has been on a break for {fmt_duration(stuck)} without confirming return."
             )
@@ -776,15 +778,16 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
 
     # Garde 7 : pauses interdites après 18h
-    if new_state in BREAK_STATES and 18 <= now.hour < 19:
+    after_1840 = now.hour > 18 or (now.hour == 18 and now.minute >= 40)
+    if new_state in BREAK_STATES and after_1840:
         label = LABELS.get(new_state, "break")
         emoji = EMOJIS.get(new_state, "⏸")
         await update.message.reply_text(
-            f"⛔ {emoji} *{label.upper()} — Break not allowed between 18:00–19:00*\n\n"
+            f"⛔ {emoji} *{label.upper()} — Break not allowed after 18:40*\n\n"
             f"*🕕 It is currently {now.strftime('%H:%M')}.*\n\n"
-            f"*One hour before the end of workday, you are expected to return to your seat.*\n\n"
+            f"*20 minutes before the end of workday, you are expected to return to your seat.*\n\n"
             f"*Please stay at your seat until 19:00.*\n"
-            f"🏆 Do the best you can — finish strong!",
+            f"🏆 Do the best you can!",
             parse_mode="Markdown"
         )
         return
@@ -828,7 +831,7 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 retard_msg = (
                     f"\n\n⚠️ *LATE ARRIVAL*\n\n"
                     f"You started work at {now.strftime('%H:%M:%S')}, which is *{retard_str} late.*\n"
-                    f"This lateness has been recorded.\n"
+                    f"❗️ This lateness has been recorded and you are fined.\n"
                     f"👀 {managers_mention}"
                 )
         # Si ce n'est pas le premier start (retour après Off Work), on garde retard_sec déjà stocké
@@ -851,10 +854,10 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"🚀Start : {now.strftime('%H:%M:%S')}\n\n"
             f"──────────────────────\n"
             f"📋 Break allowance for today :\n\n"
-            f"🍽  EAT           — 2x × 40 minutes\n"
+            f"🍽  EAT           — 3x × 40 minutes\n"
             f"🚽 Big toilet   — 2x × 20 minutes\n"
             f"🚬 Smoke         — 5x × 7 minutes\n"
-            f"🚻 Small toilet — unlimited × 7 minutes\n"
+            f"🚻 Small toilet — 6x × 7 minutes\n"
             f"──────────────────────\n"
             f"💸 Yo, stay sharp — chase that paper and make today count!"
             + retard_msg,
@@ -875,6 +878,7 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
         u["break_type"]  = new_state
         u["state"]       = new_state
 
+
         label     = LABELS[new_state]
         emoji     = EMOJIS[new_state]
         limit_min = LIMITS[new_state] // 60
@@ -882,16 +886,26 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ordinals  = {1: "1st", 2: "2nd", 3: "3rd"}
         ordinal   = ordinals.get(current_count, f"{current_count}th")
 
+        # Label contextuel pour les repas
+        meal_labels = {1: "🌅 Breakfast", 2: "☀️ Lunch", 3: "🌙 Dinner"}
+        meal_note   = ""
+        if new_state == BREAK_FOOD:
+            meal_name = meal_labels.get(current_count, f"Meal #{current_count}")
+            meal_note = f"🍽 Meal type   : *{meal_name}*\n"
+
         await update.message.reply_text(
             f"🟡 {label.upper()} START\n\n"
             f"✅ Check-in successful: {label} saved.\n"
-            f"📝Note: This is your {ordinal} time using the {label.lower()}.\n\n"
+            f"📝Note: This is your {ordinal} time using the {label.lower()}.\n"
+            f"{meal_note}\n"
             f"📅Date : {now.strftime('%d/%m/%Y')}\n"
             f"👤Name : {name}\n"
             f"🚀Start : {now.strftime('%H:%M:%S')}\n"
             f"⏳Limit : {limit_min} minutes\n"
             f"──────────────────────\n"
-            f"⏰ But don't spend too much time on breaks, because time is precious."
+            f"*⏰ But don't spend too much time on breaks, because time is precious.*\n"
+            f"Late returning to your seat will be fined.",
+            parse_mode="Markdown"
         )
 
         if u.get("warn_task") and not u["warn_task"].done():
@@ -987,7 +1001,7 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
         net_sec   = max(work_sec - break_sec, 0)
 
         # ── Blocage Off Work avant 18h27 ──
-        normal_end  = end_time.replace(hour=18, minute=27, second=0, microsecond=0)
+        normal_end  = end_time.replace(hour=18, minute=59, second=0, microsecond=0)
         diff_depart = (normal_end - end_time).total_seconds()
 
         if end_time < normal_end:
@@ -1006,7 +1020,7 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text(
                 f"⛔ *OFF WORK — Too early*\n\n"
                 f"🕐 It is currently *{end_time.strftime('%H:%M')}*.\n"
-                f"🏁 Normal end of shift: for Analamahitsy: *19:00* and for Tsarasaotra: *18:30.*\n\n"
+                f"🏁 Normal end of shift: *19:00*\n\n"
                 f"You still have *{da_str}* left before your shift ends.",
                 parse_mode="Markdown"
             )
